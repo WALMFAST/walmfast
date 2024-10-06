@@ -1,0 +1,1 @@
+model = '         Redmi A1+'
