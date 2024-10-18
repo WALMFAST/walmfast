@@ -1,5 +1,4 @@
 from customtkinter import *
-from CTkMessagebox import ctkmessagebox
 from settings import selector
 from settings import window_and_objects as winaobj
 from showinfm import show_in_file_manager
@@ -9,18 +8,15 @@ import importlib
 import crossfiledialog
 import webbrowser
 
-from pyglet import font
-
 if selector.select_languages == 'rus':
     from languages import rus as lang
-
-font.add_file(winaobj.FONT)
 
 des = CTk()
 des.title(f"WALM Fastboot - {lang.fastboot_flash_firmware}")
 des.geometry(winaobj.WINDOW_SIZE)
 des.resizable(False, False)
 
+FontManager.load_font(winaobj.FONT)
 
 from script import imageload
 from script import musicplayer
@@ -32,6 +28,11 @@ def menu_firmware():
     base_frame.place_forget()
     reboot_menu_frame.place_forget()
     phone_status_frame.place_forget()
+
+    music_name_log_read = open('infolog/musicname.txt', 'r')
+    music_name.configure(text=music_name_log_read.read())
+    music_name_log_read.close()
+
     menu_frame.place(x=0,y=0)
 def menu_base():
     menu_frame.place_forget()
@@ -39,6 +40,7 @@ def menu_base():
     phone_status_frame.place_forget()
     phone_status_frame.place_forget()
     gsi_menu_frame.place_forget()
+    about_menu_frame.place_forget()
     base_frame.place(x=0, y=0)
 def menu_phone_status():
     menu_frame.place_forget()
@@ -46,6 +48,9 @@ def menu_phone_status():
 def menu_gsi():
     menu_frame.place_forget()
     gsi_menu_frame.place(x=0,y=0)
+def menu_about():
+    menu_frame.place_forget()
+    about_menu_frame.place(x=0,y=0)
 def firmware_complect_installer():
     global distr
     base_frame.place_forget()
@@ -220,7 +225,7 @@ phone_vendor_model.place(x=20, y=467)
 exit_button = CTkButton(can, font=(winaobj.FONT_NAME, winaobj.FONT_SIZE_STANDART), height=45, text=f'{lang.exit}',corner_radius=2, bg_color='black', fg_color='black', hover_color='grey', border_color='white', border_width=2, command=lambda: os._exit(0))
 exit_button.place(x=800,y=467)
 
-about_button = CTkButton(can, font=(winaobj.FONT_NAME, winaobj.FONT_SIZE_STANDART), height=45, text=f'{lang.about}',corner_radius=2, bg_color='black', fg_color='black', hover_color='grey', border_color='white', border_width=2)
+about_button = CTkButton(can, font=(winaobj.FONT_NAME, winaobj.FONT_SIZE_STANDART), height=45, text=f'{lang.about}',corner_radius=2, bg_color='black', fg_color='black', hover_color='grey', border_color='white', border_width=2, command=menu_about)
 about_button.place(x=650,y=467)
 
 select_phone_model_button = CTkButton(can, font=(winaobj.FONT_NAME, winaobj.FONT_SIZE_SMALL), height=45, text=f'{lang.select_phone_model}',corner_radius=2, bg_color='black', fg_color='black', hover_color='grey', border_color='white', border_width=2, command=load_phone_vendor)
@@ -254,6 +259,9 @@ menu_frame.place(x=0,y=0)
 background = CTkLabel(menu_frame, image=imageload.background, text='')
 background.place(x=1, y=1)
 
+music_name = CTkLabel(menu_frame, font=(winaobj.FONT_NAME, winaobj.FONT_SIZE_BIG), text=f'name of music', bg_color='black', wraplength=950,justify=LEFT)
+music_name.place(x=5, y=370)
+
 firmwares_frame = CTkFrame(menu_frame, width=380, height=250, bg_color='black', fg_color='black', corner_radius=3, border_color='white', border_width=2)
 firmwares_frame.place(x=285,y=103)
 
@@ -270,7 +278,7 @@ location_music_button = CTkButton(firmwares_frame, font=(winaobj.FONT_NAME, wina
 location_music_button.place(x=45, y=70)
 
 install_firmware_complect_button = CTkButton(firmwares_frame, font=(winaobj.FONT_NAME, winaobj.FONT_SIZE_SMALL), text=lang.install_firmware_complect, image=imageload.install_firmware_complect,corner_radius=2, bg_color='black', fg_color='black', hover_color='grey', border_color='white', border_width=2, command=firmware_complect_installer)
-install_firmware_complect_button.place(x=4, y=130)
+install_firmware_complect_button.place(x=10, y=130)
 
 #Entity 4 - Installer Firmware Complect
 firmware_complect_installer_frame = CTkFrame(des, width=winaobj.WIDTH, height=winaobj.HEIGHT, bg_color='black')
@@ -370,6 +378,28 @@ delete_product_button.place(x=100, y=385)
 search_gsi_button = CTkButton(gsi_menu_frame, font=(winaobj.FONT_NAME, winaobj.FONT_SIZE_STANDART_MEDIUM), text=lang.search_gsi, image=imageload.search_gsi,corner_radius=2, bg_color='black', fg_color='black', hover_color='grey', border_color='white', border_width=2, command=lambda: webbrowser.open_new_tab(winaobj.SEARCH_GSI_URL))
 search_gsi_button.place(x=560, y=110)
 
+#Entity 8 - About 
+about_menu_frame = CTkFrame(des, width=winaobj.WIDTH, height=winaobj.HEIGHT, bg_color='black')
+about_menu_frame.place(x=0,y=0)
+
+background = CTkLabel(about_menu_frame, image=imageload.background, text='')
+background.place(x=1, y=1)
+
+walmfast_logo = CTkLabel(about_menu_frame, image=imageload.logo, text='')
+walmfast_logo.place(x=120, y=100)
+
+program_name = CTkLabel(about_menu_frame, font=(winaobj.FONT_NAME, winaobj.FONT_SIZE_STANDART), text=f'{lang.program_name}', bg_color='black')
+program_name.place(x=400, y=100)
+
+model_branch = CTkLabel(about_menu_frame, font=(winaobj.FONT_NAME, winaobj.FONT_SIZE_STANDART), text=f'{winaobj.VERSION} - {winaobj.BRANCH}', bg_color='black')
+model_branch.place(x=400, y=150)
+
+model_branch = CTkLabel(about_menu_frame, font=(winaobj.FONT_NAME, winaobj.FONT_SIZE_STANDART), text=f'{lang.made_by}', bg_color='black')
+model_branch.place(x=400, y=200)
+
+close_button = CTkButton(about_menu_frame, font=(winaobj.FONT_NAME, winaobj.FONT_SIZE_SMALL), text=lang.close, image=imageload.close,corner_radius=2, bg_color='black', fg_color='black', hover_color='grey', border_color='white', border_width=2, command=menu_base)
+close_button.place(x=400, y=250)
+
 #Required actions
 des.wm_protocol('WM_DELETE_WINDOW', lambda: os._exit(0))
 
@@ -389,4 +419,5 @@ reboot_menu_frame.place_forget()
 firmware_complect_installer_frame.place_forget()
 phone_status_frame.place_forget()
 gsi_menu_frame.place_forget()
+about_menu_frame.place_forget()
 des.mainloop()

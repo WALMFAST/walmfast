@@ -26,6 +26,7 @@ approve_custom_load = PhotoImage(file=winaobj.APPROVE_CUSTOM_LOAD)
 wipe_data = PhotoImage(file=winaobj.WIPE_DATA)
 search_gsi = PhotoImage(file=winaobj.SEARCH_GSI)
 product = PhotoImage(file=winaobj.PRODUCT)
+logo = PhotoImage(file=winaobj.LOGO)
 
 def load_image(image_path):
     image = PhotoImage(file=image_path)

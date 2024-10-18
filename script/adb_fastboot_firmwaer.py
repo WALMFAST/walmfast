@@ -4,22 +4,22 @@ import os
 def get_devices_adb():
 
 	try:
-		os.remove('device.txt')
+		os.remove('infolog/device.txt')
 	except:
 		pass
 
 	command = ''
 
 	if platform.system() == 'Linux':
-		command = os.system('adb devices > devices.txt')
+		command = os.system('adb devices > infolog/devices.txt')
 	elif platform.system() == 'Windows':
-		command = os.system('platform-tools-windows\\platform-tools\\adb devices > devices.txt ')
+		command = os.system('platform-tools-windows\\platform-tools\\adb devices > infolog\\devices.txt ')
 
 	if command != 0:
 		print(f'Error receiving devices')
 		return False
 
-	device_txt = open('devices.txt', 'r+').read()
+	device_txt = open('infolog/devices.txt', 'r+').read()
 	result = device_txt.split('\n')
 
 	devices = result[1:]
@@ -40,15 +40,15 @@ def get_devices_fastboot():
 	command = ''
 
 	if platform.system() == 'Linux':
-		command = os.system('fastboot devices > devices.txt')
+		command = os.system('fastboot devices > infolog/devices.txt')
 	elif platform.system() == 'Windows':
-		command = os.system('platform-tools-windows\\platform-tools\\fastboot devices > devices.txt ')
+		command = os.system('platform-tools-windows\\platform-tools\\fastboot devices > infolog\\devices.txt')
 
 	if command != 0:
 		print(f'Error receiving devices')
 		return False
 
-	device_txt = open('devices.txt', 'r+').read()
+	device_txt = open('infolog/devices.txt', 'r+').read()
 	devices = device_txt[0:16]
 
 	if devices == '':

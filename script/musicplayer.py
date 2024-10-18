@@ -1,5 +1,5 @@
 from pygame import mixer
-from os import listdir
+from os import listdir, path, remove
 from time import sleep
 from threading import Thread
 from settings import window_and_objects as winaobj
@@ -18,9 +18,20 @@ def player():
     try:
         for a in range(100):
             for i in listdir('music'):
+
+                try:
+                    remove('infolog/musicname.txt')
+                except:
+                    pass
+
+                music_log = open('infolog/musicname.txt', 'w')
+                music_log.write(i[:-4])
+                music_log.close()
+
                 music = mixer.Sound(f'music/{i}')
                 channel.play(music, loops=winaobj.MUSIC_LOOPS)
-                print(f'\nPlaying: {i[:-4]} \nDuration: {int(music.get_length())} seconds \nRepeat - {winaobj.MUSIC_LOOPS}')
+                print(f'\nPlaying: {i[:-4]} \nDuration: {int(music.get_length())} seconds \nRepeat - {winaobj.MUSIC_LOOPS}')  
+
                 sleep(music.get_length()*winaobj.MUSIC_LOOPS)
             if a == 100:
                 return 0

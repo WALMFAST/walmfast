@@ -1,3 +1,5 @@
+VERSION = '0.0.1'
+BRANCH = 'dev'
 WINDOW_SIZE = '960x540'
 WIDTH = 960
 HEIGHT = 540
@@ -34,6 +36,7 @@ APPROVE_CUSTOM_LOAD = 'image/approve_custom_load.png'
 WIPE_DATA = 'image/wipe_data.png'
 SEARCH_GSI = 'image/search_gsi.png'
 PRODUCT = 'image/product.png'
+LOGO = 'image/logo.png'
 SEARCH_GSI_URL = 'https://4pda.to/forum/index.php?showtopic=892755&view=findpost&p=71222655'
 PHONE_VENDOR_PATH = 'phone_vendor'
 WINDOWS_PLATFROM_URL = 'https://dl.google.com/android/repository/platform-tools-latest-windows.zip'
