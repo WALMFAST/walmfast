@@ -1,2 +1,2 @@
-pip install customtkinter pygame Pillow wget show-in-file-manager crossfiledialog
+pip install wget customtkinter pygame Pillow show-in-file-manager crossfiledialog xdialog pyglet
 python main.py

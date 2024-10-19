@@ -1,4 +1,5 @@
 model = '        Redmi 13C'
+image = 'gale.jpg'
 partitions = ['efuse.img',
               'crclist.txt',
               'sparsecrclist.txt',

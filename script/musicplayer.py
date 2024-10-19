@@ -34,8 +34,27 @@ def player():
 
                 sleep(music.get_length()*winaobj.MUSIC_LOOPS)
             if a == 100:
+                try:
+                    remove('infolog/musicname.txt')
+                except:
+                    pass
+
+                music_log = open('infolog/musicname.txt', 'w')
+                music_log.write(' ')
+                music_log.close()
+
                 return 0
     except:
+        
+        try:
+            remove('infolog/musicname.txt')
+        except:
+            pass
+
+        music_log = open('infolog/musicname.txt', 'w')
+        music_log.write(' ')
+        music_log.close()
+
         return 0
 
 player_enable = Thread(target=player)
