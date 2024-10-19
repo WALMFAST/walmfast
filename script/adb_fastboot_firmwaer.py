@@ -13,7 +13,7 @@ def get_devices_adb():
 	if platform.system() == 'Linux':
 		command = os.system('adb devices > infolog/devices.txt')
 	elif platform.system() == 'Windows':
-		command = os.system('platform-tools-windows\\platform-tools\\adb devices > infolog\\devices.txt ')
+		command = os.system('platform-tools-windows\\platform-tools\\adb devices > infolog\devices.txt ')
 
 	if command != 0:
 		print(f'Error receiving devices')
@@ -42,7 +42,7 @@ def get_devices_fastboot():
 	if platform.system() == 'Linux':
 		command = os.system('fastboot devices > infolog/devices.txt')
 	elif platform.system() == 'Windows':
-		command = os.system('platform-tools-windows\\platform-tools\\fastboot devices > infolog\\devices.txt')
+		command = os.system('platform-tools-windows\\platform-tools\\fastboot devices > infolog\devices.txt')
 
 	if command != 0:
 		print(f'Error receiving devices')
