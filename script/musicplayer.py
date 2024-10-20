@@ -24,7 +24,7 @@ def player():
                 except:
                     pass
 
-                music_log = open('infolog/musicname.txt', 'w')
+                music_log = open('infolog/musicname.txt', 'w', encoding="utf-8")
                 music_log.write(i[:-4])
                 music_log.close()
 
@@ -39,7 +39,7 @@ def player():
                 except:
                     pass
 
-                music_log = open('infolog/musicname.txt', 'w')
+                music_log = open('infolog/musicname.txt', 'w', encoding="utf-8")
                 music_log.write(' ')
                 music_log.close()
 
@@ -51,7 +51,7 @@ def player():
         except:
             pass
 
-        music_log = open('infolog/musicname.txt', 'w')
+        music_log = open('infolog/musicname.txt', 'w', encoding="utf-8")
         music_log.write(' ')
         music_log.close()
 

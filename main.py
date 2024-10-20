@@ -21,9 +21,7 @@ des.resizable(False, False)
 if platform.system() == 'Linux':
     FontManager.load_font(winaobj.FONT)
 elif platform.system() == 'Windows':
-    from pyglet import options, font
-    options['win32_gdi_font'] = True
-    font.add_file(f"{os.getcwd()}/{winaobj.FONT}")
+    winaobj.FONT_NAME = 'Segoe UI'
 
 
 from script import imageload
@@ -37,11 +35,15 @@ def menu_firmware():
     reboot_menu_frame.place_forget()
     phone_status_frame.place_forget()
 
-    music_name_log_read = open('infolog/musicname.txt', 'r')
-    music_name.configure(text=music_name_log_read.read())
-    music_name_log_read.close()
+    try:
+        music_name_log_read = open('infolog/musicname.txt', 'r', encoding="utf-8")
+        music_name.configure(text=music_name_log_read.read())
+        music_name_log_read.close()
+    except:
+        music_name.configure(text='music')
 
     menu_frame.place(x=0,y=0)
+    des.update()
 def menu_base():
     menu_frame.place_forget()
     reboot_menu_frame.place_forget()
@@ -147,6 +149,7 @@ def phone_test_state(mode):
         if ad_fas_firm.get_devices_adb() == None or ad_fas_firm.get_devices_adb() == False:
             android_phone_status.configure(text=lang.not_found)
             android_phone_status.place(x=55, y=370)
+            xdialog.error('WALMFast', f'{lang.platorm_tools_error}')
         else:
             android_phone_status.configure(text=ad_fas_firm.get_devices_adb(), font=(winaobj.FONT_NAME, winaobj.FONT_SIZE_STANDART_MEDIUM))
             android_phone_status.place(x=33, y=370)
@@ -154,6 +157,7 @@ def phone_test_state(mode):
         if ad_fas_firm.get_devices_fastboot() == None or ad_fas_firm.get_devices_fastboot() == False:
             android_phone_status.configure(text=lang.not_found)
             android_phone_status.place(x=55, y=370)
+            xdialog.error('WALMFast', f'{lang.platorm_tools_error}')
         else:
             android_phone_status.configure(text=ad_fas_firm.get_devices_fastboot(), font=(winaobj.FONT_NAME, winaobj.FONT_SIZE_STANDART_MEDIUM))
             android_phone_status.place(x=33, y=370)
@@ -173,7 +177,32 @@ def phone_test_state(mode):
 def load_phone_vendor():
     global vendorvice
 
-    try:
+    if platform.system() == 'Linux':
+        try:
+            phone_vendor = crossfiledialog.open_file(title='Open phone vendor file for WALMFAST', start_dir=f'{os.getcwd()}/{winaobj.PHONE_VENDOR_PATH}/', filter=["*.py"])
+            vendorid = str(os.path.basename(phone_vendor))[:-3]
+            vendorvice = importlib.import_module(name=f'.{vendorid}.{vendorid}', package=f'{winaobj.PHONE_VENDOR_PATH}')
+
+            try:
+                importlib.reload(vendorvice)
+            except:
+                pass
+
+            phone_vendor_model.configure(text=vendorvice.model)
+            icon = imageload.load_image(f'{winaobj.PHONE_VENDOR_PATH}/{vendorid}/icon.png')
+            des.iconphoto(False, icon)
+
+            try:
+                android.configure(image=imageload.load_image(f'{winaobj.PHONE_VENDOR_PATH}/{vendorid}/{vendorvice.image}'))
+            except:
+                android.configure(image=imageload.android)
+
+            select_firmware_folder_button.configure(state='normal')
+            des.update()
+        except:
+            pass
+    elif platform.system() == 'Windows':
+
         phone_vendor = crossfiledialog.open_file(title='Open phone vendor file for WALMFAST', start_dir=f'{os.getcwd()}/{winaobj.PHONE_VENDOR_PATH}/', filter=["*.py"])
         vendorid = str(os.path.basename(phone_vendor))[:-3]
         vendorvice = importlib.import_module(name=f'.{vendorid}.{vendorid}', package=f'{winaobj.PHONE_VENDOR_PATH}')
@@ -184,18 +213,9 @@ def load_phone_vendor():
             pass
 
         phone_vendor_model.configure(text=vendorvice.model)
-        icon = imageload.load_image(f'{winaobj.PHONE_VENDOR_PATH}/{vendorid}/icon.png')
-        des.iconphoto(False, icon)
-
-        try:
-            android.configure(image=imageload.load_image(f'{winaobj.PHONE_VENDOR_PATH}/{vendorid}/{vendorvice.image}'))
-        except:
-            android.configure(image=imageload.android)
 
         select_firmware_folder_button.configure(state='normal')
         des.update()
-    except:
-       pass
 def load_firmware_folder():
     global vendorvice
 
@@ -362,7 +382,7 @@ hader_state = CTkLabel(phone_status_frame, font=(winaobj.FONT_NAME, winaobj.FONT
 
 close_button = CTkButton(phone_status_frame, font=(winaobj.FONT_NAME, winaobj.FONT_SIZE_SMALL), text=lang.close, text_color='white', image=imageload.close,corner_radius=2, bg_color='black', fg_color='black', hover_color='grey', border_color='white', border_width=2, command=menu_base)
 
-close_button.place(x=400, y=250)
+close_button.place(x=400, y=260)
 hader_state.place(x=160, y=100)
 phone_status_through_adb.place(x=300, y=200)
 phone_status_through_fastboot.place(x=500, y=202)
