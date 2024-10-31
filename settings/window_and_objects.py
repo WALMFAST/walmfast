@@ -1,3 +1,5 @@
+VERSION = '0.0.1'
+BRANCH = 'dev'
 WINDOW_SIZE = '960x540'
 WIDTH = 960
 HEIGHT = 540
@@ -16,7 +18,7 @@ FONT_SIZE_STANDART = 40
 FONT_SIZE_STANDART_MEDIUM = 30
 FONT_SIZE_SMALL = 20
 FONT_SIZE_BIG = 60
-MUSIC_LOOPS = 2
+MUSIC_LOOPS = 1
 MUSIC_START_IS=1
 TUX = 'image/tux.png'
 DEBIAN = 'image/debian.png'
@@ -34,7 +36,16 @@ APPROVE_CUSTOM_LOAD = 'image/approve_custom_load.png'
 WIPE_DATA = 'image/wipe_data.png'
 SEARCH_GSI = 'image/search_gsi.png'
 PRODUCT = 'image/product.png'
+LOGO = 'image/logo.png'
+ATTETION = 'image/attetion.png'
+FORPDA = 'image/forpda.jpg'
+CUSTOM_BOOTLOADER = 'image/customboot.png'
+TWRP = 'image/twrp.png'
+ORANGEFOX='image/orangefox.png'
+PBRP='image/pbrp.png'
 SEARCH_GSI_URL = 'https://4pda.to/forum/index.php?showtopic=892755&view=findpost&p=71222655'
 PHONE_VENDOR_PATH = 'phone_vendor'
+EXTENDED = 'image/extended.png'
+DONAT_DESTINATION = 'image/donat.png'
 WINDOWS_PLATFROM_URL = 'https://dl.google.com/android/repository/platform-tools-latest-windows.zip'
-WINDOWS_PLATFORM_DRIVER = 'https://cs1e5a.4pda.ws/9213674/Driver_Auto_Installer_EXE_v5.1632.00.zip?s=00a1484750ea4da766f2fd8d00000000a2abd353c4e9a9af6ac2585d4fac5a2a'
+WINDOWS_PLATFORM_DRIVER = 'https://raw.githubusercontent.com/WALMFAST/walmfast/refs/heads/main/Driver_Auto_Installer_EXE_v5.1632.00.zip'
