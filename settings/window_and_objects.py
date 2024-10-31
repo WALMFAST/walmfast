@@ -1,5 +1,5 @@
 VERSION = '0.0.1'
-BRANCH = 'dev'
+BRANCH = 'main'
 WINDOW_SIZE = '960x540'
 WIDTH = 960
 HEIGHT = 540
