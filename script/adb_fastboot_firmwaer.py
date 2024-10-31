@@ -1,5 +1,6 @@
 import platform
 import os
+import shutil
 
 def get_devices_adb():
 
@@ -13,7 +14,7 @@ def get_devices_adb():
 	if platform.system() == 'Linux':
 		command = os.system('adb devices > infolog/devices.txt')
 	elif platform.system() == 'Windows':
-		command = os.system('platform-tools-windows\\platform-tools\\adb devices > infolog\\devices.txt ')
+		command = os.system(fr'{os.getcwd()}\\platform-tools-windows\\platform-tools\\adb devices > infolog\devices.txt ')
 
 	if command != 0:
 		print(f'Error receiving devices')
@@ -33,7 +34,7 @@ def get_devices_adb():
 def get_devices_fastboot():
 
 	try:
-		os.remove('device.txt')
+		os.remove('infolog/devices.txt')
 	except:
 		pass
 
@@ -42,7 +43,7 @@ def get_devices_fastboot():
 	if platform.system() == 'Linux':
 		command = os.system('fastboot devices > infolog/devices.txt')
 	elif platform.system() == 'Windows':
-		command = os.system('platform-tools-windows\\platform-tools\\fastboot devices > infolog\\devices.txt')
+		command = os.system(fr'{os.getcwd()}\\platform-tools-windows\\platform-tools\\fastboot devices > infolog\\devices.txt')
 
 	if command != 0:
 		print(f'Error receiving devices')
@@ -66,3 +67,80 @@ def partitions_is_true(path, vendor_parti):
 			continue
 
 	return partioion_true
+
+def reboot_phone(system, into):
+    
+    if platform.system() == 'Linux':
+        try:
+            if os.system(f'{system} reboot {into}') == 0:
+                return True
+            else:
+                return False
+        except:
+            return False
+    elif platform.system() == 'Windows':
+        try:
+            if os.system(fr'{os.getcwd()}\\platform-tools-windows\\platform-tools\\{system} reboot {into}') == 0:
+                return True
+            else:
+                return False
+        except:
+            return False
+    else:
+        return False
+
+def status_unlock():
+
+	try:
+		os.remove('infolog/unlock.txt')
+	except:
+		pass
+
+	command = ''
+
+	if platform.system() == 'Linux':
+		command = os.system('fastboot getvar unlocked 2> infolog/unlock.txt')
+	elif platform.system() == 'Windows':
+		command = os.system(fr'{os.getcwd()}\\platform-tools-windows\\platform-tools\\fastboot getvar unlocked 2> infolog\\unlock.txt')
+
+	if command != 0:
+		print(f'Error receiving unlock')
+		return False
+	
+	unlock_txt = open('infolog/unlock.txt', 'r+').read()
+	unlock = unlock_txt.split('\n')[0][10:]
+
+	return unlock
+
+def flash_partition(partition, file):
+
+	try:
+		shutil.copyfile(file, f'{os.getcwd()}/partitions/recovery/{os.path.basename(file)}')
+	except:
+		return False
+
+	try:
+		os.remove('infolog/partition.txt')
+	except:
+		pass
+    
+	if platform.system() == 'Linux':
+		try:
+			if os.system(f'fastboot flash {partition} partitions/recovery/{os.path.basename(file)} 2> infolog/partition.txt') == 0:
+				os.remove(f'{os.getcwd()}/partitions/recovery/{os.path.basename(file)}')
+				return True
+			else:
+				os.remove(f'{os.getcwd()}/partitions/recovery/{os.path.basename(file)}')
+		except:
+			os.remove(f'{os.getcwd()}/partitions/recovery/{os.path.basename(file)}')
+	elif platform.system() == 'Windows':
+		try:
+			if os.system(fr'{os.getcwd()}\\platform-tools-windows\\platform-tools\\fastboot flash {partition} partitions\\recovery\\{os.path.basename(file)} 2> infolog\\partition.txt') == 0:
+				os.remove(f'{os.getcwd()}/partitions/recovery/{os.path.basename(file)}')
+				return True
+			else:
+				os.remove(f'{os.getcwd()}/partitions/recovery/{os.path.basename(file)}')
+		except:
+			os.remove(f'{os.getcwd()}/partitions/recovery/{os.path.basename(file)}')
+	else:
+		os.remove(f'{os.getcwd()}/partitions/recovery/{os.path.basename(file)}')

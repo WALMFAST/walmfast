@@ -60,23 +60,3 @@ def install_complect_firmware(system):
     elif system == 'no support':
         return False
 
-def reboot_phone(system, into):
-    
-    if platform.system() == 'Linux':
-        try:
-            if os.system(f'{system} reboot {into}') == 0:
-                return True
-            else:
-                return False
-        except:
-            return False
-    elif platform.system() == 'Windows':
-        try:
-            if os.system(f'platform-tools-windows\platform-tools\{system} reboot {into}') == 0:
-                return True
-            else:
-                return False
-        except:
-            return False
-    else:
-        return False
