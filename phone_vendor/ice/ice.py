@@ -1,4 +1,4 @@
-model = '         Redmi A1+'
+model = 'Redmi A1+'
 image = 'ice.png'
 official_firmwares_forum_forpda = 'https://4pda.to/forum/index.php?showtopic=1057795'
 nonofficial_firmwares_forum_forpda = 'https://4pda.to/forum/index.php?showtopic=1057795'

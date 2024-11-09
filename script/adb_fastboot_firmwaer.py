@@ -29,7 +29,7 @@ def get_devices_adb():
 	if devices[0] == '':
 		return None
 	else:
-		return devices[0]
+		return devices[0][0:16]
 		
 def get_devices_fastboot():
 

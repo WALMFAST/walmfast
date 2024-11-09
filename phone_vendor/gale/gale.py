@@ -1,4 +1,4 @@
-model = '        Redmi 13C'
+model = 'Redmi 13C'
 image = 'gale.jpg'
 official_firmwares_forum_forpda = 'https://4pda.to/forum/index.php?showtopic=1080405'
 nonofficial_firmwares_forum_forpda = 'https://4pda.to/forum/index.php?showtopic=1094689'
