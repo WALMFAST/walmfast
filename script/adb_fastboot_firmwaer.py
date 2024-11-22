@@ -70,24 +70,36 @@ def partitions_is_true(path, vendor_parti):
 
 def reboot_phone(system, into):
     
-    if platform.system() == 'Linux':
-        try:
-            if os.system(f'{system} reboot {into}') == 0:
-                return True
-            else:
-                return False
-        except:
-            return False
-    elif platform.system() == 'Windows':
-        try:
-            if os.system(fr'{os.getcwd()}\\platform-tools-windows\\platform-tools\\{system} reboot {into}') == 0:
-                return True
-            else:
-                return False
-        except:
-            return False
-    else:
-        return False
+	if platform.system() == 'Linux':
+		try:
+			if into == 'system':
+				if os.system(f'{system} reboot') == 0:
+					return True
+				else:
+					return False
+			else:
+				if os.system(f'{system} reboot {into}') == 0:
+					return True
+				else:
+					return False
+		except:
+			return False
+	elif platform.system() == 'Windows':
+		try:
+			if into == 'system':
+				if os.system(fr'{os.getcwd()}\\platform-tools-windows\\platform-tools\\{system} reboot') == 0:
+					return True
+				else:
+					return False
+			else:
+				if os.system(fr'{os.getcwd()}\\platform-tools-windows\\platform-tools\\{system} reboot {into}') == 0:
+					return True
+				else:
+					return False
+		except:
+			return False
+	else:
+		return False
 
 def status_unlock():
 
@@ -144,3 +156,69 @@ def flash_partition(partition, file):
 			os.remove(f'{os.getcwd()}/partitions/recovery/{os.path.basename(file)}')
 	else:
 		os.remove(f'{os.getcwd()}/partitions/recovery/{os.path.basename(file)}')
+
+def flash_system(partition, file):
+
+	try:
+		shutil.copyfile(file, f'{os.getcwd()}/partitions/system/{os.path.basename(file)}')
+	except:
+		return False
+
+	try:
+		os.remove('infolog/partition.txt')
+	except:
+		pass
+    
+	if platform.system() == 'Linux':
+		try:
+			if os.system(f'fastboot flash {partition} partitions/system/{os.path.basename(file)} 2> infolog/partition.txt') == 0:
+				os.remove(f'{os.getcwd()}/partitions/system/{os.path.basename(file)}')
+				return True
+			else:
+				os.remove(f'{os.getcwd()}/partitions/system/{os.path.basename(file)}')
+		except:
+			os.remove(f'{os.getcwd()}/partitions/system/{os.path.basename(file)}')
+	elif platform.system() == 'Windows':
+		try:
+			if os.system(fr'{os.getcwd()}\\platform-tools-windows\\platform-tools\\fastboot flash {partition} partitions\\system\\{os.path.basename(file)} 2> infolog\\partition.txt') == 0:
+				os.remove(f'{os.getcwd()}/partitions/system/{os.path.basename(file)}')
+				return True
+			else:
+				os.remove(f'{os.getcwd()}/partitions/system/{os.path.basename(file)}')
+		except:
+			os.remove(f'{os.getcwd()}/partitions/system/{os.path.basename(file)}')
+	else:
+		os.remove(f'{os.getcwd()}/partitions/system/{os.path.basename(file)}')
+
+def flash_vbmeta(partition, file):
+
+	try:
+		shutil.copyfile(file, f'{os.getcwd()}/partitions/system/{os.path.basename(file)}')
+	except:
+		return False
+
+	try:
+		os.remove('infolog/partition.txt')
+	except:
+		pass
+    
+	if platform.system() == 'Linux':
+		try:
+			if os.system(f'fastboot --disable-verity --disable-verification flash {partition} partitions/system/{os.path.basename(file)} 2> infolog/partition.txt') == 0:
+				os.remove(f'{os.getcwd()}/partitions/system/{os.path.basename(file)}')
+				return True
+			else:
+				os.remove(f'{os.getcwd()}/partitions/system/{os.path.basename(file)}')
+		except:
+			os.remove(f'{os.getcwd()}/partitions/system/{os.path.basename(file)}')
+	elif platform.system() == 'Windows':
+		try:
+			if os.system(fr'{os.getcwd()}\\platform-tools-windows\\platform-tools\\fastboot --disable-verity --disable-verification flash {partition} partitions\\system\\{os.path.basename(file)} 2> infolog\\partition.txt') == 0:
+				os.remove(f'{os.getcwd()}/partitions/system/{os.path.basename(file)}')
+				return True
+			else:
+				os.remove(f'{os.getcwd()}/partitions/system/{os.path.basename(file)}')
+		except:
+			os.remove(f'{os.getcwd()}/partitions/system/{os.path.basename(file)}')
+	else:
+		os.remove(f'{os.getcwd()}/partitions/system/{os.path.basename(file)}')
