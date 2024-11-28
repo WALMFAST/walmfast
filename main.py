@@ -1,3 +1,6 @@
+from script import adb_fastboot_firmwaer as ad_fas_firm
+ad_fas_firm.init()
+
 from customtkinter import *
 from settings import selector
 from settings import window_and_objects as winaobj
@@ -23,7 +26,6 @@ des.resizable(False, False)
 from script import imageload
 from script import musicplayer
 from script import firmware_complect_install as firm_comp_install
-from script import adb_fastboot_firmwaer as ad_fas_firm
 
 #System fix
 rootfs = os.getcwd()
@@ -195,7 +197,6 @@ def phone_test_state(mode):
             xdialog.error('WALMFast', f'{lang.platorm_tools_error}')
         else:
             android_phone_status.configure(text=ad_fas_firm.get_devices_fastboot(), font=(winaobj.FONT_NAME, winaobj.FONT_SIZE_STANDART_MEDIUM))
-
     if android_phone_status._text == lang.not_found:
         pass
     elif android_phone_status._text != lang.not_found:
@@ -353,87 +354,47 @@ def start_flash_recovery(reboot):
         menu_base()
     if ad_fas_firm.status_unlock() == 'yes':
         flash_recovery_process_hader.configure(text=lang.q_start_flash_recovery_process[3])
-
         if vendorvice.nonuniversalboot == False:
             universal_detect_boot = 'boot'
         elif vendorvice.nonuniversalboot == True:
             universal_detect_boot = 'recovery'
         else:
             universal_detect_boot = 'boot'
-
         if ad_fas_firm.flash_partition(partition=universal_detect_boot, file=recovery_image) == True:
-            flash_recovery_process_hader.configure(text=lang.q_start_flash_recovery_process[4])
-
-            reboot_after_recovery_button.place(x=640, y=340)
-            reboot_after_system_button.place(x=790, y=340)
+            flash_recovery_process_hader.place_forget()
+            xdialog.info('WALMFAST', f'{lang.score}\n\n{open('infolog/partition.txt', encoding='utf-8').read()}')
+            close_button.place(x=795, y=470)
+            menu_base()
         elif ad_fas_firm.flash_partition(partition=universal_detect_boot, file=recovery_image) == False:
-            xdialog.error('WALMFAST', lang.q_start_flash_recovery_process[6])
+            xdialog.error('WALMFAST', lang.q_start_flash_recovery_process[4])
             close_button.place(x=795, y=470)
             flash_recovery_process_hader.place_forget()
             flash_recovery_button.place(x=530, y=472)
             menu_base()
-def reboot_after(reboot, type='recovery'):
-
-    reboot_after_recovery_button.place_forget()
-    reboot_after_system_button.place_forget()
     
-    if reboot == 'recovery':
-        if ad_fas_firm.reboot_phone('fastboot', 'recovery') == False:
-            votesdial = xdialog.retrycancel('WALMFAST', lang.q_start_flash_recovery_process[5])
-            if votesdial == xdialog.RETRY:
-                reboot_after(reboot='system')
-            elif votesdial == xdialog.CANCEL:
-                pass
-    elif reboot == 'system':
-        ad_fas_firm.reboot_phone('fastboot', 'system')
-        if ad_fas_firm.reboot_phone('fastboot', 'recovery') == False:
-            votesdial = xdialog.retrycancel('WALMFAST', lang.q_start_flash_recovery_process[5])
-            if votesdial == xdialog.RETRY:
-                reboot_after(reboot='system')
-            elif votesdial == xdialog.CANCEL:
-                pass
-            
-    xdialog.info('WALMFAST', f'{lang.score}\n\n{open('infolog/partition.txt', encoding='utf-8').read()}')
-    close_button.place(x=795, y=470)
-
-    if type == 'recovery':
-        flash_recovery_process_hader.place_forget()
-        flash_gsi_process_hader.place_forget()
-    elif type == 'system':
-        flash_recovery_button.place(x=530, y=472)
-        flash_gsi.place(x=585, y=470)
-
-    menu_base()
 def write_language(language):
-
     with open('settings/selector.py', 'r') as f:
         for i in range(0):
             f.readline()
         x = f.readline()
-
     with open ('settings/selector.py', 'r') as f:
         old_data = f.read()
-
     new_data = old_data.replace(f'{x}', f"select_languages =  '{language}'\n")
-
     with open ('settings/selector.py', 'w') as f:
         f.write(new_data)
-
+    xdialog.info('WALMFAST', lang.program_is_exit)
     os._exit(0)
 def themeswitch(theme):
     with open('settings/selector.py', 'r') as f:
         for i in range(1):
             f.readline()
         x = f.readline()
-
     with open ('settings/selector.py', 'r') as f:
         old_data = f.read()
-
     new_data = old_data.replace(f'{x}', f"theme =  '{theme}'\n")
-
     with open ('settings/selector.py', 'w') as f:
         f.write(new_data)
-
+    xdialog.info('WALMFAST', lang.program_is_exit)
     os._exit(0)
 def gsi_installer():
     menu_frame.place_forget()
@@ -488,12 +449,14 @@ def flash_gsi_step_two(reboot):
         des.update()
 
         if ad_fas_firm.flash_system(partition='system', file=gsi_image) == True:
-            flash_recovery_process_hader.configure(text=lang.gsi_process_hader[5])
-            reboot_gsi_after_recovery_button.place(x=640, y=340)
-            reboot_gsi_after_system_button.place(x=790, y=340)
+            flash_recovery_process_hader.place_forget()
+            xdialog.info('WALMFAST', f'{lang.score}\n\n{open('infolog/partition.txt', encoding='utf-8').read()}')
+            close_button.place(x=795, y=470)
+            flash_gsi.place(x=585, y=470)
             des.update()
+            menu_base()
         elif ad_fas_firm.flash_system(partition='system', file=gsi_image) == False:
-            xdialog.error('WALMFAST', lang.gsi_process_hader[6])
+            xdialog.error('WALMFAST', lang.gsi_process_hader[5])
             close_button.place(x=795, y=470)
             flash_gsi_process_hader.place_forget()
             flash_gsi.place(x=585, y=470)
@@ -503,13 +466,11 @@ def vbmeta_installer():
     vbmeta_frame.place(x=0, y=0)
 def select_vbmeta_image():
     global vbmeta_image
-
     vbmeta_image = crossfiledialog.open_file(title='Open gsi image file for WALMFAST', filter=["*.img"])
     if vbmeta_image != '' and os.path.basename(vbmeta_image) == 'vbmeta.img':
         vbmeta_name.configure(text=f'{os.path.basename(vbmeta_image)}')
         vbmeta_name.place(x=40, y=250)
         flash_vbmeta.place(x=550, y=471)
-        
     if platform.system() == 'Windows':
         os.chdir(rootfs)
     des.update()
@@ -522,6 +483,7 @@ def flash_vbmeta_step_one():
 def flash_vbmeta_step_two(reboot):
     reboot_fastbot_yes_button.place_forget()
     reboot_fastbot_no_button.place_forget()
+
     if reboot == True:
         flash_vbmeta_process_hader.configure(text=f'{lang.vbmeta_process_hader[1]}')
         des.update()
@@ -544,11 +506,9 @@ def flash_vbmeta_step_two(reboot):
     elif ad_fas_firm.status_unlock() == 'yes':
         flash_vbmeta_process_hader.configure(text=f'{lang.vbmeta_process_hader[4]}')
         des.update()
-
         if ad_fas_firm.flash_system(partition='vbmeta', file=vbmeta_image) == True:
             flash_recovery_process_hader.configure(text=lang.vbmeta_process_hader[5])
             des.update()
-
             xdialog.info('WALMFAST', f'{lang.score}\n\n{open('infolog/partition.txt', encoding='utf-8').read()}')
             vbmeta_name.place_forget()
             flash_vbmeta_process_hader.place_forget()
@@ -728,10 +688,6 @@ background = CTkLabel(gsi_menu_frame, image=imageload.background, text='')
 
 close_button = CTkButton(gsi_menu_frame, font=(winaobj.FONT_NAME, winaobj.FONT_SIZE_SMALL), text=lang.close, text_color=text, image=imageload.close,corner_radius=2, bg_color=bg, fg_color=fg, hover_color=hover, border_color=border, border_width=2, width=150, command=menu_base)
 
-unlock_bootloader_button = CTkButton(gsi_menu_frame, font=(winaobj.FONT_NAME, winaobj.FONT_SIZE_STANDART_MEDIUM), text=lang.unlock_bootloader, text_color=text, image=imageload.unlock_bootloader,corner_radius=2, bg_color=bg, fg_color=fg, width=495, anchor=W, hover_color=hover, border_color=border, border_width=2)
-
-lock_bootloader_button = CTkButton(gsi_menu_frame, font=(winaobj.FONT_NAME, winaobj.FONT_SIZE_STANDART_MEDIUM), text=lang.lock_bootloader, text_color=text, image=imageload.lock_bootloader,corner_radius=2, bg_color=bg, fg_color=fg, width=495, anchor=W, hover_color=hover, border_color=border, border_width=2)
-
 flash_custom_partition_button = CTkButton(gsi_menu_frame, font=(winaobj.FONT_NAME, winaobj.FONT_SIZE_STANDART_MEDIUM), text=lang.flash_custom_partition, text_color=text, image=imageload.flash,corner_radius=2, bg_color=bg, fg_color=fg, width=495, anchor=W, hover_color=hover, border_color=border, border_width=2, command=gsi_installer)
 
 approve_custom_load_button = CTkButton(gsi_menu_frame, font=(winaobj.FONT_NAME, winaobj.FONT_SIZE_STANDART_MEDIUM), text=lang.approve_custom_load, text_color=text, image=imageload.approve_custom_load,corner_radius=2, width=495, bg_color=bg, anchor=W, fg_color=fg, hover_color=hover, border_color=border, border_width=2, command=vbmeta_installer)
@@ -744,19 +700,20 @@ search_gsi_button = CTkButton(gsi_menu_frame, font=(winaobj.FONT_NAME, winaobj.F
 
 forum_nonfirmwares_forpda_button = CTkButton(gsi_menu_frame, font=(winaobj.FONT_NAME, winaobj.FONT_SIZE_STANDART_MEDIUM), height=45, text=f'{lang.forum_official_firmwares_forpda}', image=imageload.forpda, text_color=text,corner_radius=2, width=315, anchor=W, bg_color=bg, fg_color=fg, hover_color=hover, border_color=border, border_width=2, command=lambda: webbrowser.open_new_tab(f'{vendorvice.nonofficial_firmwares_forum_forpda}'))
 
+adbsideload_button = CTkButton(gsi_menu_frame, font=(winaobj.FONT_NAME, winaobj.FONT_SIZE_STANDART_MEDIUM), height=45, text=f'{lang.adbsideload}', image=imageload.adb, text_color=text,corner_radius=2, width=315, anchor=W, bg_color=bg, fg_color=fg, hover_color=hover, border_color=border, border_width=2)
+
 customboot_button = CTkButton(gsi_menu_frame, font=(winaobj.FONT_NAME, winaobj.FONT_SIZE_STANDART_MEDIUM), height=45, text=f'{lang.install_customboot}', image=imageload.customboot, text_color=text,corner_radius=2, bg_color=bg, fg_color=fg, width=495, anchor=W, hover_color=hover, border_color=border, border_width=2, command=customboot)
 
 background.place(x=1, y=1)
 close_button.place(x=795, y=470)
-unlock_bootloader_button.place(x=40, y=110)
-lock_bootloader_button.place(x=40, y=165)
-flash_custom_partition_button.place(x=40, y=220)
-approve_custom_load_button.place(x=40, y=275)
-wipe_data_button.place(x=40, y=330)
-delete_product_button.place(x=40, y=385)
+flash_custom_partition_button.place(x=40, y=110)
+approve_custom_load_button.place(x=40, y=163)
+wipe_data_button.place(x=40, y=216)
+delete_product_button.place(x=40, y=269)
 search_gsi_button.place(x=580, y=110)
 forum_nonfirmwares_forpda_button.place(x=580,y=163)
-customboot_button.place(x=40,y=440)
+adbsideload_button.place(x=580,y=226)
+customboot_button.place(x=40,y=322)
 
 #Entity 8 - About 
 about_menu_frame = CTkFrame(des, width=winaobj.WIDTH, height=winaobj.HEIGHT, bg_color=bg)
@@ -808,9 +765,6 @@ flash_recovery_process_hader = CTkLabel(customboot_frame, font=(winaobj.FONT_NAM
 
 recovery_yes_button = CTkButton(customboot_frame, font=(winaobj.FONT_NAME, winaobj.FONT_SIZE_STANDART_MEDIUM), text=f'{lang.yes}', text_color=text,corner_radius=2, bg_color=bg, fg_color=fg, hover_color=hover, border_color=border, border_width=2, command=lambda: start_flash_recovery(reboot=True))
 recovery_no_button = CTkButton(customboot_frame, font=(winaobj.FONT_NAME, winaobj.FONT_SIZE_STANDART_MEDIUM), text=f'{lang.no}', text_color=text,corner_radius=2, bg_color=bg, fg_color=fg, hover_color=hover, border_color=border, border_width=2, command=lambda: start_flash_recovery(reboot=False))
-
-reboot_after_recovery_button = CTkButton(customboot_frame, font=(winaobj.FONT_NAME, winaobj.FONT_SIZE_STANDART_MEDIUM), text=f'{lang.recovery}', text_color=text,corner_radius=2, bg_color=bg, fg_color=fg, hover_color=hover, border_color=border, border_width=2, command=lambda: reboot_after(reboot='recovery'))
-reboot_after_system_button = CTkButton(customboot_frame, font=(winaobj.FONT_NAME, winaobj.FONT_SIZE_STANDART_MEDIUM), text=f'{lang.system}', text_color=text,corner_radius=2, bg_color=bg, fg_color=fg, hover_color=hover, border_color=border, border_width=2, command=lambda: reboot_after(reboot='system'))
 
 background.place(x=1, y=1)
 customboot_hader.place(x=40, y=30)
@@ -893,9 +847,6 @@ flash_gsi_process_hader = CTkLabel(gsi_frame, font=(winaobj.FONT_NAME, winaobj.F
 reboot_fastbotd_yes_button = CTkButton(gsi_frame, font=(winaobj.FONT_NAME, winaobj.FONT_SIZE_STANDART_MEDIUM), text=f'{lang.yes}', text_color=text,corner_radius=2, bg_color=bg, fg_color=fg, hover_color=hover, border_color=border, border_width=2, command=lambda: flash_gsi_step_two(reboot=True))
 reboot_fastbotd_no_button = CTkButton(gsi_frame, font=(winaobj.FONT_NAME, winaobj.FONT_SIZE_STANDART_MEDIUM), text=f'{lang.no}', text_color=text,corner_radius=2, bg_color=bg, fg_color=fg, hover_color=hover, width=150, border_color=border, border_width=2, command=lambda: flash_gsi_step_two(reboot=False))
 
-reboot_gsi_after_recovery_button = CTkButton(gsi_frame, font=(winaobj.FONT_NAME, winaobj.FONT_SIZE_STANDART_MEDIUM), text=f'{lang.recovery}', text_color=text,corner_radius=2, bg_color=bg, fg_color=fg, hover_color=hover, border_color=border, border_width=2, command=lambda: reboot_after(reboot='recovery', type='system'))
-reboot_gsi_after_system_button = CTkButton(gsi_frame, font=(winaobj.FONT_NAME, winaobj.FONT_SIZE_STANDART_MEDIUM), text=f'{lang.system}', text_color=text,corner_radius=2, bg_color=bg, fg_color=fg, hover_color=hover, border_color=border, border_width=2, command=lambda: reboot_after(reboot='system', type='system'))
-
 background.place(x=1, y=1)
 gsi_hader.place(x=40, y=30)
 gsi_descryption.place(x=40, y=120)
@@ -929,11 +880,12 @@ vbmeta_hader.place(x=40, y=30)
 vbmeta_descryption.place(x=40, y=120)
 close_button.place(x=795, y=470)
 select_vbmeta_button.place(x=795, y=250)
+
 #Required actions
 des.wm_protocol('WM_DELETE_WINDOW', lambda: os._exit(0))
 
 #Debug
-gsi_menu_button.configure(state='normal')
+#gsi_menu_button.configure(state='normal')
 
 #Startup
 des.mainloop()

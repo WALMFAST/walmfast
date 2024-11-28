@@ -12,8 +12,15 @@ def detect_system():
     if platform.system() == 'Linux':
         if platform.freedesktop_os_release()['ID_LIKE'] == 'arch':
             distr = [imageload.arch, 'arch']
-        elif platform.freedesktop_os_release()['ID_LIKE'] == 'debian':
+        elif platform.freedesktop_os_release()['ID_LIKE'] == 'debian' or platform.freedesktop_os_release()['ID_LIKE'] == 'ubuntu debian' or platform.freedesktop_os_release()['ID_LIKE'] == 'ubuntu':
             distr = [imageload.debian, 'debian']
+        elif platform.freedesktop_os_release()['ID_LIKE'] == '':
+            if os.system('apt') == 0:
+                distr = [imageload.debian, 'debian']
+            elif os.system('pacman') == 0:
+                distr = [imageload.arch, 'arch']
+            else:
+                distr = [imageload.tux, 'no support'] 
         else:
             distr = [imageload.tux, 'no support']
     elif platform.system() == 'Windows':
@@ -32,7 +39,7 @@ def install_complect_firmware(system):
             return False
     elif system == 'debian':
         try:
-            os.system('pkexec apt update && sudo apt install android-tools-adb android-tools-fastboot ')
+            os.system('pkexec apt update && pkexec apt install android-tools-adb android-tools-fastboot')
             return True
         except:
             return False

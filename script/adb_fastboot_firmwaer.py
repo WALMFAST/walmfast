@@ -2,6 +2,35 @@ import platform
 import os
 import shutil
 
+def init():
+	print('Initialization adb/fastboot module')
+	if os.path.isdir('infolog') == False:
+		os.mkdir('infolog')
+	else:
+		pass
+
+	if os.path.isdir('partitions') == False:
+		os.mkdir('partitions')
+	else:
+		pass
+
+	if os.path.isdir('partitions/system') == False:
+		os.mkdir('partitions/system')
+	else:
+		pass
+
+	if os.path.isdir('partitions/recovery') == False:
+		os.mkdir('partitions/recovery')
+	else:
+		pass
+	
+	if os.path.isdir('partitions/vbmeta') == False:
+		os.mkdir('partitions/vbmeta')
+	else:
+		pass
+	print('Initialization module is OK')
+	return True
+
 def get_devices_adb():
 
 	try:
@@ -193,7 +222,7 @@ def flash_system(partition, file):
 def flash_vbmeta(partition, file):
 
 	try:
-		shutil.copyfile(file, f'{os.getcwd()}/partitions/system/{os.path.basename(file)}')
+		shutil.copyfile(file, f'{os.getcwd()}/partitions/vbmeta/{os.path.basename(file)}')
 	except:
 		return False
 
@@ -204,21 +233,31 @@ def flash_vbmeta(partition, file):
     
 	if platform.system() == 'Linux':
 		try:
-			if os.system(f'fastboot --disable-verity --disable-verification flash {partition} partitions/system/{os.path.basename(file)} 2> infolog/partition.txt') == 0:
-				os.remove(f'{os.getcwd()}/partitions/system/{os.path.basename(file)}')
+			if os.system('fastboot oem cdms') == 0:
+				print('OEM CDMS is worked')
+			else:
+				print('OEM CDMS is not worked')
+
+			if os.system(f'fastboot --disable-verity --disable-verification flash {partition} partitions/vbmeta/{os.path.basename(file)} 2> infolog/partition.txt') == 0:
+				os.remove(f'{os.getcwd()}/partitions/vbmeta/{os.path.basename(file)}')
 				return True
 			else:
-				os.remove(f'{os.getcwd()}/partitions/system/{os.path.basename(file)}')
+				os.remove(f'{os.getcwd()}/partitions/vbmeta/{os.path.basename(file)}')
 		except:
-			os.remove(f'{os.getcwd()}/partitions/system/{os.path.basename(file)}')
+			os.remove(f'{os.getcwd()}/partitions/vbmeta/{os.path.basename(file)}')
 	elif platform.system() == 'Windows':
 		try:
-			if os.system(fr'{os.getcwd()}\\platform-tools-windows\\platform-tools\\fastboot --disable-verity --disable-verification flash {partition} partitions\\system\\{os.path.basename(file)} 2> infolog\\partition.txt') == 0:
-				os.remove(f'{os.getcwd()}/partitions/system/{os.path.basename(file)}')
+			if os.system(fr'{os.getcwd()}\\platform-tools-windows\\platform-tools\\fastboot oem cdms') == 0:
+				print('OEM CDMS is worked')
+			else:
+				print('OEM CDMS is not worked')
+
+			if os.system(fr'{os.getcwd()}\\platform-tools-windows\\platform-tools\\fastboot --disable-verity --disable-verification flash {partition} partitions\\vbmeta\\{os.path.basename(file)} 2> infolog\\partition.txt') == 0:
+				os.remove(f'{os.getcwd()}/partitions/vbmeta/{os.path.basename(file)}')
 				return True
 			else:
-				os.remove(f'{os.getcwd()}/partitions/system/{os.path.basename(file)}')
+				os.remove(f'{os.getcwd()}/partitions/vbmeta/{os.path.basename(file)}')
 		except:
-			os.remove(f'{os.getcwd()}/partitions/system/{os.path.basename(file)}')
+			os.remove(f'{os.getcwd()}/partitions/vbmeta/{os.path.basename(file)}')
 	else:
-		os.remove(f'{os.getcwd()}/partitions/system/{os.path.basename(file)}')
+		os.remove(f'{os.getcwd()}/partitions/vbmeta/{os.path.basename(file)}')
