@@ -14,6 +14,11 @@ def init():
 	else:
 		pass
 
+	if os.path.isdir('music') == False:
+		os.mkdir('music')
+	else:
+		pass
+
 	if os.path.isdir('partitions/system') == False:
 		os.mkdir('partitions/system')
 	else:
