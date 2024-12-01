@@ -15,9 +15,9 @@ def detect_system():
         elif platform.freedesktop_os_release()['ID_LIKE'] == 'debian' or platform.freedesktop_os_release()['ID_LIKE'] == 'ubuntu debian' or platform.freedesktop_os_release()['ID_LIKE'] == 'ubuntu':
             distr = [imageload.debian, 'debian']
         elif platform.freedesktop_os_release()['ID_LIKE'] == '':
-            if os.system('apt') == 0:
+            if os.system('apt list') == 0:
                 distr = [imageload.debian, 'debian']
-            elif os.system('pacman') == 0:
+            elif os.system('pacman -Q') == 0:
                 distr = [imageload.arch, 'arch']
             else:
                 distr = [imageload.tux, 'no support'] 
