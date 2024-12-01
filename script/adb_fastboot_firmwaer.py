@@ -28,6 +28,13 @@ def init():
 		os.mkdir('partitions/vbmeta')
 	else:
 		pass
+
+	try:
+		for file in os.listdir('infolog'):
+			os.remove(file)
+	except:
+		pass
+	
 	print('Initialization module is OK')
 	return True
 
