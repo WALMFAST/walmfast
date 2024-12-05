@@ -310,8 +310,18 @@ def customboot():
     except:
         orangefox_button.place_forget()
 
+    try:
+        if vendorvice.nonuniversalboot == True:
+            flashit_partition_attetion.configure(text=lang.flashit_recovery_partition)
+            flashit_partition_attetion.place(x=0, y=10)
+        elif vendorvice.nonuniversalboot == False:
+            flashit_partition_attetion.configure(text=lang.flashit_boot_partition)
+            flashit_partition_attetion.place(x=0, y=10)
+    except:
+        flashit_partition_attetion.place_forget()
+
     recovery_path_textbox.place(x=40, y=250)
-    select_recovery_button.place(x=780, y=250)
+    select_recovery_button.place(x=795, y=250)
     menu_frame.place_forget()
     customboot_frame.place(x=0,y=0)
 def select_recovery_image():
@@ -766,6 +776,8 @@ flash_recovery_process_hader = CTkLabel(customboot_frame, font=(winaobj.FONT_NAM
 recovery_yes_button = CTkButton(customboot_frame, font=(winaobj.FONT_NAME, winaobj.FONT_SIZE_STANDART_MEDIUM), text=f'{lang.yes}', text_color=text,corner_radius=2, bg_color=bg, fg_color=fg, hover_color=hover, border_color=border, border_width=2, command=lambda: start_flash_recovery(reboot=True))
 recovery_no_button = CTkButton(customboot_frame, font=(winaobj.FONT_NAME, winaobj.FONT_SIZE_STANDART_MEDIUM), text=f'{lang.no}', text_color=text,corner_radius=2, bg_color=bg, fg_color=fg, hover_color=hover, border_color=border, border_width=2, command=lambda: start_flash_recovery(reboot=False))
 
+flashit_partition_attetion = CTkLabel(customboot_frame, font=(winaobj.FONT_NAME, winaobj.FONT_SIZE_SMALL), width=winaobj.WIDTH, height=18, justify='center', text=f'partition', text_color='red', bg_color=bg)
+
 background.place(x=1, y=1)
 customboot_hader.place(x=40, y=30)
 customboot_descryption.place(x=40, y=120)
@@ -885,7 +897,7 @@ select_vbmeta_button.place(x=795, y=250)
 des.wm_protocol('WM_DELETE_WINDOW', lambda: os._exit(0))
 
 #Debug
-#gsi_menu_button.configure(state='normal')
+gsi_menu_button.configure(state='normal')
 
 #Startup
 des.mainloop()

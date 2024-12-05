@@ -80,3 +80,5 @@ vbmeta_descryption = "Select the vbmeta file from your firmware. With her help \
 vbmeta_process_hader = ['Reboot phone into fastboot?', 'Reboot phone. its longer but wait.', 'Start of system firmware. Bootloader check', 'Bootloader unlocked. Flash phone', 'Vbmeta flash process was successful', 'An error occurred in the flash vbmeta.\nCheck the file or the connection between your phone and PC.']
 program_is_exit = 'The program will be closed to apply changes. After closing, you will be able to open it yourself.'
 adbsideload = 'Adb Sideload'
+flashit_recovery_partition = 'Flash it the recovery partition!'
+flashit_boot_partition = 'Flash it the boot partition!'
