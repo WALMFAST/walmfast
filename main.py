@@ -897,7 +897,7 @@ select_vbmeta_button.place(x=795, y=250)
 des.wm_protocol('WM_DELETE_WINDOW', lambda: os._exit(0))
 
 #Debug
-gsi_menu_button.configure(state='normal')
+#gsi_menu_button.configure(state='normal')
 
 #Startup
 des.mainloop()
