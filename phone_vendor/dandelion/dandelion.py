@@ -1,4 +1,4 @@
-model = '          Redmi 9A'
+model = 'Redmi 9A'
 image = 'dandelion.jpg'
 official_firmwares_forum_forpda = 'https://4pda.to/forum/index.php?showtopic=1005664'
 nonofficial_firmwares_forum_forpda = 'https://4pda.to/forum/index.php?showtopic=1049197'
@@ -18,6 +18,7 @@ partitions = ['crclist.txt',
               'sspm.img',
               'lk.img',
               'boot.img',
+              'recovery.img'
               'logo.bin',
               'dtbo.img',
               'tee.img',

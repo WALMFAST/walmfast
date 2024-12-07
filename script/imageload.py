@@ -35,6 +35,11 @@ orangefox = PhotoImage(file=winaobj.ORANGEFOX)
 pbrp = PhotoImage(file=winaobj.PBRP)
 extended = PhotoImage(file=winaobj.EXTENDED)
 donat_destination = PhotoImage(file=winaobj.DONAT_DESTINATION)
+select_language = PhotoImage(file=winaobj.SELECT_LANGUAGE)
+select_theme = PhotoImage(file=winaobj.SELECT_THEME)
+music = PhotoImage(file=winaobj.MUSIC)
+russian_flag = PhotoImage(file=winaobj.RUSSIAN_FLAG)
+english_flag = PhotoImage(file=winaobj.ENGLISH_FLAG)
 
 def load_image(image_path):
     image = PhotoImage(file=image_path)
