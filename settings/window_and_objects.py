@@ -1,9 +1,11 @@
+
 from settings import selector
 
 theme = selector.theme
 
 VERSION = '0.0.2'
-BRANCH = 'dev'
+BRANCH = 'main'
+
 WINDOW_SIZE = '960x540'
 WIDTH = 960
 HEIGHT = 540
