@@ -4,7 +4,7 @@ from settings import selector
 theme = selector.theme
 
 VERSION = '0.0.2'
-BRANCH = 'main'
+BRANCH = 'dev'
 
 WINDOW_SIZE = '960x540'
 WIDTH = 960
