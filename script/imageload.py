@@ -40,6 +40,9 @@ select_theme = PhotoImage(file=winaobj.SELECT_THEME)
 music = PhotoImage(file=winaobj.MUSIC)
 russian_flag = PhotoImage(file=winaobj.RUSSIAN_FLAG)
 english_flag = PhotoImage(file=winaobj.ENGLISH_FLAG)
+update = PhotoImage(file=winaobj.UPDATE)
+sideload = PhotoImage(file=winaobj.SIDELOAD)
+right = PhotoImage(file=winaobj.RIGHT)
 
 def load_image(image_path):
     image = PhotoImage(file=image_path)

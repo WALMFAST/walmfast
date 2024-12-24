@@ -1,6 +1,8 @@
 import platform
 import os
 import shutil
+import getpass
+from settings import window_and_objects as winaobj
 
 def init():
 	print('Initialization adb/fastboot module')
@@ -34,12 +36,23 @@ def init():
 	else:
 		pass
 
+	if platform.system() == 'Linux':
+		if os.path.isfile(f'/home/{getpass.getuser()}/.fonts/{winaobj.FONT[4:]}') == False:
+			shutil.copyfile(winaobj.FONT, f'/home/{getpass.getuser()}/.fonts/{winaobj.FONT[4:]}')
+		else:
+			pass
+
+	if os.path.isdir('update') == False:
+		os.mkdir('update')
+	else:
+		pass
+
 	try:
 		for file in os.listdir('infolog'):
 			os.remove(file)
 	except:
 		pass
-	
+
 	print('Initialization module is OK')
 	return True
 
@@ -114,8 +127,11 @@ def reboot_phone(system, into):
 	if platform.system() == 'Linux':
 		try:
 			if into == 'system':
-				if os.system(f'{system} reboot') == 0:
-					return True
+				if os.system(f'adb kill-server') == 0:
+					if os.system(f'{system} reboot') == 0:
+						return True
+					else:
+						return False
 				else:
 					return False
 			else:
@@ -128,6 +144,7 @@ def reboot_phone(system, into):
 	elif platform.system() == 'Windows':
 		try:
 			if into == 'system':
+				
 				if os.system(fr'{os.getcwd()}\\platform-tools-windows\\platform-tools\\{system} reboot') == 0:
 					return True
 				else:
@@ -273,3 +290,89 @@ def flash_vbmeta(partition, file):
 			os.remove(f'{os.getcwd()}/partitions/vbmeta/{os.path.basename(file)}')
 	else:
 		os.remove(f'{os.getcwd()}/partitions/vbmeta/{os.path.basename(file)}')
+
+def sideload(file):
+
+	if platform.system() == 'Linux':
+		try:
+			if os.system(f'adb sideload {file} 2> infolog/partition.txt') == 0:
+				return True
+			else:
+				return False
+		except:
+			return False
+	elif platform.system() == 'Windows':
+		try:
+			if os.system(fr'{os.getcwd()}\\platform-tools-windows\\platform-tools\\adb sideload {file} 2> infolog/partition.txt') == 0:
+				return True
+			else:
+				return False
+		except:
+			return False
+		
+def get_slot():
+
+	try:
+		os.remove('infolog/slot.txt')
+	except:
+		pass
+
+	command = ''
+
+	if platform.system() == 'Linux':
+		command = os.system('fastboot getvar current-slot 2> infolog/slot.txt')
+	elif platform.system() == 'Windows':
+		command = os.system(fr'{os.getcwd()}\\platform-tools-windows\\platform-tools\\fastboot getvar current-slot 2> infolog\\slot.txt')
+
+	if command != 0:
+		print(f'Error receiving slot')
+		return False
+	
+	slot_txt = open('infolog/slot.txt', 'r+').read()
+	slot = slot_txt.split('\n')[0][14:]
+	
+	return slot
+
+def wipe_data():
+
+	if platform.system() == 'Linux':
+		try:
+			if os.system(f'fastboot -w 2> infolog/partition.txt') == 0:
+				if os.system(f'fastboot reboot recovery 2> infolog/partition.txt') == 0:
+					return True
+				else:
+					return False
+			else:
+				return False
+		except:
+			return False
+	elif platform.system() == 'Windows':
+		try:
+			if os.system(fr'{os.getcwd()}\\platform-tools-windows\\platform-tools\\fastboot -w  2> infolog/partition.txt') == 0:
+				if os.system(fr'{os.getcwd()}\\platform-tools-windows\\platform-tools\\fastboot reboot recovery 2> infolog/partition.txt') == 0:
+					return True
+				else:
+					return False
+			else:
+				return False
+		except:
+			return False
+		
+def delete_product():
+
+	if platform.system() == 'Linux':
+		try:
+			if os.system(f'fastboot delete-logical-partition product_{get_slot()} 2> infolog/partition.txt') == 0:
+				return True
+			else:
+				return False
+		except:
+			return False
+	elif platform.system() == 'Windows':
+		try:
+			if os.system(fr'{os.getcwd()}\\platform-tools-windows\\platform-tools\\fastboot delete-logical-partition product_{get_slot()} 2> infolog/partition.txt') == 0:
+				return True
+			else:
+				return False
+		except:
+			return False
