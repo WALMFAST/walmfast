@@ -555,7 +555,7 @@ def update():
 
     if status_update == 'Update_normal':
         update_hader.configure(text=lang.update_normal)
-        close_button.configure(state='normal')
+        update_close_button.configure(state='normal')
     elif status_update == 'Update_recommend':
         update_hader.configure(text=lang.update_recommend)
         update_yes_button.place(x=300, y=300)
