@@ -52,7 +52,10 @@ def update_app(status):
             except:
                 shutil.copyfile(f'{rootfs}/backup/{os.path.basename(rootfs)}/{update_file}', f'{rootfs}/{update_file}')
                 shutil.rmtree(f'{rootfs}/backup/')
+                os.remove(f'{rootfs}/update.py')
                 return False
+            
+        os.remove(f'{rootfs}/update.py')
             
         return True
     
@@ -109,6 +112,7 @@ def update_app(status):
 
             shutil.rmtree(f'{rootfs}/walmfast-{update.branch}')
             shutil.rmtree(f'{rootfs}/backup')
+            os.remove(f'{rootfs}/update.py')
             return True
         except:
 
@@ -128,5 +132,7 @@ def update_app(status):
                     shutil.copytree(f'{rootfs}/backup/{os.path.basename(rootfs)}/{file_return}', f'{rootfs}/{file_return}')
                 elif os.path.isfile(f'{rootfs}/backup/{os.path.basename(rootfs)}/{file_return}') == True:
                     shutil.copyfile(f'{rootfs}/backup/{os.path.basename(rootfs)}/{file_return}', f'{rootfs}/{file_return}')
+
+            os.remove(f'{rootfs}/update.py')
             
             return False
