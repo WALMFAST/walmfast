@@ -10,6 +10,11 @@ def check_update():
     global update
 
     try:
+        os.remove('update/update.py')
+    except:
+        pass
+
+    try:
         download(winaobj.meta_info_update, 'update/')
     except:
         return False
@@ -38,15 +43,31 @@ def update_app(status):
     rootfs = os.getcwd()
 
     if status == 'Update_recommend':
+
+        try:
+            os.mkdir(f'{rootfs}/backup')
+        except:
+            pass
+
+        for file_backup in os.listdir(rootfs):
+
+            if file_backup == 'backup':
+                continue
+            else:
+                pass              
+
+            if os.path.isdir(f'{rootfs}/{file_backup}') == True:
+                shutil.copytree(f'{rootfs}/{file_backup}', f'{rootfs}/backup/{os.path.basename(rootfs)}/{file_backup}')
+            else:
+                pass
+            
+            if os.path.isfile(f'{rootfs}/{file_backup}') == True:
+                shutil.copyfile(f'{rootfs}/{file_backup}', f'{rootfs}/backup/{os.path.basename(rootfs)}/{file_backup}')
+            else:
+                pass
         
         for update_file in update.update_packages:
-            try:
-                os.mkdir(f'{rootfs}/backup')
-            except:
-                pass
-
-            shutil.copytree(f'{rootfs}', f'{rootfs}/backup/{os.path.basename(rootfs)}')
-
+            
             os.remove(update_file)
             
             try:
@@ -56,8 +77,11 @@ def update_app(status):
                 shutil.rmtree(f'{rootfs}/backup/')
                 os.remove(f'{rootfs}/update.py')
                 return False
-            
-        os.remove(f'{rootfs}/update.py')
+
+        try:    
+            os.remove(f'{rootfs}/update.py')
+        except:
+            pass
             
         return True
     
@@ -135,6 +159,9 @@ def update_app(status):
                 elif os.path.isfile(f'{rootfs}/backup/{os.path.basename(rootfs)}/{file_return}') == True:
                     shutil.copyfile(f'{rootfs}/backup/{os.path.basename(rootfs)}/{file_return}', f'{rootfs}/{file_return}')
 
-            os.remove(f'{rootfs}/update.py')
-            
+            try:
+                os.remove(f'{rootfs}/update.py')
+            except:
+                pass
+
             return False
