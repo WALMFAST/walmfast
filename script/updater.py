@@ -19,14 +19,16 @@ def check_update():
     except:
         from update import update
 
+    patch_version = update.patch - version.patch
+
     if update.version == version.version or update.version < version.version:
         if update.patch == version.patch or update.patch < version.patch:
             os.remove('update/update.py')
             return 'Update_normal'
         elif update.patch > version.patch:
-            if update.patch - version.patch < 0 or update.patch - version.patch == 0:
+            if patch_version < 1 or patch_version > -1:
                 return 'Update_recommend'
-            elif update.patch - version.patch > 0:
+            elif patch_version > 1:
                 return 'Update_required'
     elif update.version > version.version:
         return 'Update_required'
