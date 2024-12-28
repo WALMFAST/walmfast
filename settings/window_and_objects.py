@@ -1,11 +1,9 @@
-
 from settings import selector
 
 theme = selector.theme
 
-VERSION = '0.0.2'
-BRANCH = 'main'
-
+VERSION = '0.0.3'
+BRANCH = 'dev'
 WINDOW_SIZE = '960x540'
 WIDTH = 960
 HEIGHT = 540
@@ -58,5 +56,9 @@ SELECT_THEME = f'image/{theme}/theme.png'
 MUSIC = f'image/{theme}/music.png'
 RUSSIAN_FLAG = f'image/{theme}/russian_flag.png'
 ENGLISH_FLAG = f'image/{theme}/english_flag.png'
+SIDELOAD = f'image/{theme}/sideload.jpg'
+RIGHT = f'image/{theme}/right.png'
 WINDOWS_PLATFROM_URL = 'https://dl.google.com/android/repository/platform-tools-latest-windows.zip'
-WINDOWS_PLATFORM_DRIVER = 'https://raw.githubusercontent.com/WALMFAST/walmfast/refs/heads/main/Driver_Auto_Installer_EXE_v5.1632.00.zip'
+WINDOWS_PLATFORM_DRIVER = 'https://raw.githubusercontent.com/WALMFAST/walmfast-drivers/refs/heads/main/Driver_Auto_Installer_EXE_v5.1632.00.zip'
+UPDATE = f'image/{theme}/update.png'
+meta_info_update = f'https://raw.githubusercontent.com/WALMFAST/walmfast-updater/refs/heads/{BRANCH}/update.py'

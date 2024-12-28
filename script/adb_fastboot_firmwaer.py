@@ -1,6 +1,10 @@
 import platform
 import os
 import shutil
+import getpass
+from settings import window_and_objects as winaobj
+
+rootfs = os.getcwd()
 
 def init():
 	print('Initialization adb/fastboot module')
@@ -34,12 +38,23 @@ def init():
 	else:
 		pass
 
+	if platform.system() == 'Linux':
+		if os.path.isfile(f'/home/{getpass.getuser()}/.fonts/{winaobj.FONT[4:]}') == False:
+			shutil.copyfile(winaobj.FONT, f'/home/{getpass.getuser()}/.fonts/{winaobj.FONT[4:]}')
+		else:
+			pass
+
+	if os.path.isdir('update') == False:
+		os.mkdir('update')
+	else:
+		pass
+
 	try:
 		for file in os.listdir('infolog'):
 			os.remove(file)
 	except:
 		pass
-	
+
 	print('Initialization module is OK')
 	return True
 
@@ -100,6 +115,7 @@ def get_devices_fastboot():
 	
 def partitions_is_true(path, vendor_parti):
 	partioion_true = []
+	print(vendor_parti)
 
 	for i in vendor_parti:
 		if os.path.isfile(f'{path}/images/{i}') == True:
@@ -114,8 +130,11 @@ def reboot_phone(system, into):
 	if platform.system() == 'Linux':
 		try:
 			if into == 'system':
-				if os.system(f'{system} reboot') == 0:
-					return True
+				if os.system(f'adb kill-server') == 0:
+					if os.system(f'{system} reboot') == 0:
+						return True
+					else:
+						return False
 				else:
 					return False
 			else:
@@ -128,6 +147,7 @@ def reboot_phone(system, into):
 	elif platform.system() == 'Windows':
 		try:
 			if into == 'system':
+				
 				if os.system(fr'{os.getcwd()}\\platform-tools-windows\\platform-tools\\{system} reboot') == 0:
 					return True
 				else:
@@ -273,3 +293,206 @@ def flash_vbmeta(partition, file):
 			os.remove(f'{os.getcwd()}/partitions/vbmeta/{os.path.basename(file)}')
 	else:
 		os.remove(f'{os.getcwd()}/partitions/vbmeta/{os.path.basename(file)}')
+
+def sideload(file):
+
+	if platform.system() == 'Linux':
+		try:
+			if os.system(f'adb sideload {file} 2> infolog/partition.txt') == 0:
+				return True
+			else:
+				return False
+		except:
+			return False
+	elif platform.system() == 'Windows':
+		try:
+			if os.system(fr'{os.getcwd()}\\platform-tools-windows\\platform-tools\\adb sideload {file} 2> infolog/partition.txt') == 0:
+				return True
+			else:
+				return False
+		except:
+			return False
+		
+def get_slot():
+
+	try:
+		os.remove('infolog/slot.txt')
+	except:
+		pass
+
+	command = ''
+
+	if platform.system() == 'Linux':
+		command = os.system('fastboot getvar current-slot 2> infolog/slot.txt')
+	elif platform.system() == 'Windows':
+		command = os.system(fr'{os.getcwd()}\\platform-tools-windows\\platform-tools\\fastboot getvar current-slot 2> infolog\\slot.txt')
+
+	if command != 0:
+		print(f'Error receiving slot')
+		return False
+	
+	slot_txt = open('infolog/slot.txt', 'r+').read()
+	slot = slot_txt.split('\n')[0][14:]
+	
+	return slot
+
+def wipe_data():
+
+	if platform.system() == 'Linux':
+		try:
+			if os.system(f'fastboot -w 2> infolog/partition.txt') == 0:
+				if os.system(f'fastboot reboot recovery 2> infolog/partition.txt') == 0:
+					return True
+				else:
+					return False
+			else:
+				return False
+		except:
+			return False
+	elif platform.system() == 'Windows':
+		try:
+			if os.system(fr'{os.getcwd()}\\platform-tools-windows\\platform-tools\\fastboot -w  2> infolog/partition.txt') == 0:
+				if os.system(fr'{os.getcwd()}\\platform-tools-windows\\platform-tools\\fastboot reboot recovery 2> infolog/partition.txt') == 0:
+					return True
+				else:
+					return False
+			else:
+				return False
+		except:
+			return False
+		
+def delete_product():
+
+	if platform.system() == 'Linux':
+		try:
+			if os.system(f'fastboot delete-logical-partition product_{get_slot()} 2> infolog/partition.txt') == 0:
+				return True
+			else:
+				return False
+		except:
+			return False
+	elif platform.system() == 'Windows':
+		try:
+			if os.system(fr'{os.getcwd()}\\platform-tools-windows\\platform-tools\\fastboot delete-logical-partition product_{get_slot()} 2> infolog/partition.txt') == 0:
+				return True
+			else:
+				return False
+		except:
+			return False
+		
+def flash_all(firmware_path):
+	global rootfs
+	if platform.system() == 'Linux':
+		try:
+			
+			os.chdir(firmware_path)
+			if os.system(f'./flash_all.sh 2> {rootfs}/infolog/partition.txt') == 0:
+				os.chdir(rootfs)
+				return True
+			else:
+				os.chdir(rootfs)
+				return False
+		except:
+			os.chdir(rootfs)
+			return False
+	elif platform.system() == 'Windows':
+		print('Step 1 - verity fastboot files in firmware path')
+
+		rootfs = os.getcwd()
+		for i in os.listdir(fr'{os.getcwd()}\\platform-tools-windows\\platform-tools\\'):
+			if os.path.isfile(f'{firmware_path}/{i}') == True:
+				continue
+			else:
+				shutil.copyfile(fr'{os.getcwd()}\\platform-tools-windows\\platform-tools\\{i}', fr'{firmware_path}\\{i}')
+
+		print('Step 2 - flash all')
+
+		try:
+			os.chdir(firmware_path)
+			if os.system(fr'flash_all 2> {rootfs}/infolog/partition.txt') == 0:
+				os.chdir(rootfs)
+				return True
+			else:
+				os.chdir(rootfs)
+				return False
+		except:
+			os.chdir(rootfs)
+			return False
+
+def flash_partition_images(firmware_path, group):
+	global rootfs
+	if platform.system() == 'Linux':
+		try:
+			os.chdir(f'{firmware_path}/images/')
+			try:
+				os.remove(f'{rootfs}/infolog/partition.txt')
+			except:
+				pass
+			for i in group:
+				if len(i) == 9 or len(i) > 9: 
+					preloader_check = i[:9]
+					if preloader_check == 'preloader':
+						if os.system(f'fastboot flash preloader {i} 2>> {rootfs}/infolog/partition.txt') == 0:
+							continue
+						else:
+							os.chdir(rootfs)
+							return False
+					else:
+						if os.system(f'fastboot flash {i[:-4]} {i} 2>> {rootfs}/infolog/partition.txt') == 0:
+							continue
+						else:
+							os.chdir(rootfs)
+							return False
+				else:
+						if os.system(f'fastboot flash {i[:-4]} {i} 2>> {rootfs}/infolog/partition.txt') == 0:
+							continue
+						else:
+							os.chdir(rootfs)
+							return False
+			os.chdir(rootfs)
+		except:
+			os.chdir(rootfs)
+			return False
+	elif platform.system() == 'Windows':
+		print('Step 1 - verity fastboot files in firmware path')
+
+		rootfs = os.getcwd()
+		for i in os.listdir(fr'{os.getcwd()}\\platform-tools-windows\\platform-tools\\'):
+			if os.path.isfile(f'{firmware_path}/images{i}') == True:
+				continue
+			else:
+				shutil.copyfile(fr'{os.getcwd()}\\platform-tools-windows\\platform-tools\\{i}', fr'{firmware_path}\\images\\{i}')
+
+		print('Step 2 - flash all')
+
+		try:
+			os.chdir(f'{firmware_path}/images/')
+			try:
+				os.remove(f'{rootfs}/infolog/partition.txt')
+			except:
+				pass
+			for i in group:
+				if len(i) == 9 or len(i) > 9: 
+					preloader_check = i[:9]
+					if preloader_check == 'preloader':
+						if os.system(f'fastboot flash preloader {i} 2>> {rootfs}/infolog/partition.txt') == 0:
+							continue
+						else:
+							os.chdir(rootfs)
+							return False
+					else:
+						if os.system(f'fastboot flash {i[:-4]} {i} 2>> {rootfs}/infolog/partition.txt') == 0:
+							continue
+						else:
+							os.chdir(rootfs)
+							return False
+				else:
+						if os.system(f'fastboot flash {i[:-4]} {i} 2>> {rootfs}/infolog/partition.txt') == 0:
+							continue
+						else:
+							os.chdir(rootfs)
+							return False
+			os.chdir(rootfs)
+		except:
+			os.chdir(rootfs)
+			return False
