@@ -99,3 +99,6 @@ clean_user_partition_descryption = 'Если вы хотите сбросить 
 please_wait = 'Пожалуйста подождите...'
 update_recommend = 'Для программы вышли патчи. Обновить?'
 update_required = 'Вышло полноценное обновление. Обновить?'
+flash_all = 'Прошить полностью'
+select_partition = 'Выбрать разделы'
+flash_phone = 'Прошивка телефона'

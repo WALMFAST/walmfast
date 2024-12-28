@@ -99,3 +99,6 @@ clean_user_partition_descryption = "If you want to reset the internal memory wit
 please_wait = 'Please wait...'
 update_recommend = 'Patches have been released for the program. Update?'
 update_required = 'A full update has been released. Update?'
+flash_all = 'Flash all'
+select_partition = 'Select partition'
+flash_phone = 'Flash Phone'

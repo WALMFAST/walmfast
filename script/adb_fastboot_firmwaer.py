@@ -4,6 +4,8 @@ import shutil
 import getpass
 from settings import window_and_objects as winaobj
 
+rootfs = os.getcwd()
+
 def init():
 	print('Initialization adb/fastboot module')
 	if os.path.isdir('infolog') == False:
@@ -113,6 +115,7 @@ def get_devices_fastboot():
 	
 def partitions_is_true(path, vendor_parti):
 	partioion_true = []
+	print(vendor_parti)
 
 	for i in vendor_parti:
 		if os.path.isfile(f'{path}/images/{i}') == True:
@@ -375,4 +378,121 @@ def delete_product():
 			else:
 				return False
 		except:
+			return False
+		
+def flash_all(firmware_path):
+	global rootfs
+	if platform.system() == 'Linux':
+		try:
+			
+			os.chdir(firmware_path)
+			if os.system(f'./flash_all.sh 2> {rootfs}/infolog/partition.txt') == 0:
+				os.chdir(rootfs)
+				return True
+			else:
+				os.chdir(rootfs)
+				return False
+		except:
+			os.chdir(rootfs)
+			return False
+	elif platform.system() == 'Windows':
+		print('Step 1 - verity fastboot files in firmware path')
+
+		rootfs = os.getcwd()
+		for i in os.listdir(fr'{os.getcwd()}\\platform-tools-windows\\platform-tools\\'):
+			if os.path.isfile(f'{firmware_path}/{i}') == True:
+				continue
+			else:
+				shutil.copyfile(fr'{os.getcwd()}\\platform-tools-windows\\platform-tools\\{i}', fr'{firmware_path}\\{i}')
+
+		print('Step 2 - flash all')
+
+		try:
+			os.chdir(firmware_path)
+			if os.system(fr'flash_all 2> {rootfs}/infolog/partition.txt') == 0:
+				os.chdir(rootfs)
+				return True
+			else:
+				os.chdir(rootfs)
+				return False
+		except:
+			os.chdir(rootfs)
+			return False
+
+def flash_partition_images(firmware_path, group):
+	global rootfs
+	if platform.system() == 'Linux':
+		try:
+			os.chdir(f'{firmware_path}/images/')
+			try:
+				os.remove(f'{rootfs}/infolog/partition.txt')
+			except:
+				pass
+			for i in group:
+				if len(i) == 9 or len(i) > 9: 
+					preloader_check = i[:9]
+					if preloader_check == 'preloader':
+						if os.system(f'fastboot flash preloader {i} 2>> {rootfs}/infolog/partition.txt') == 0:
+							continue
+						else:
+							os.chdir(rootfs)
+							return False
+					else:
+						if os.system(f'fastboot flash {i[:-4]} {i} 2>> {rootfs}/infolog/partition.txt') == 0:
+							continue
+						else:
+							os.chdir(rootfs)
+							return False
+				else:
+						if os.system(f'fastboot flash {i[:-4]} {i} 2>> {rootfs}/infolog/partition.txt') == 0:
+							continue
+						else:
+							os.chdir(rootfs)
+							return False
+			os.chdir(rootfs)
+		except:
+			os.chdir(rootfs)
+			return False
+	elif platform.system() == 'Windows':
+		print('Step 1 - verity fastboot files in firmware path')
+
+		rootfs = os.getcwd()
+		for i in os.listdir(fr'{os.getcwd()}\\platform-tools-windows\\platform-tools\\'):
+			if os.path.isfile(f'{firmware_path}/images{i}') == True:
+				continue
+			else:
+				shutil.copyfile(fr'{os.getcwd()}\\platform-tools-windows\\platform-tools\\{i}', fr'{firmware_path}\\images\\{i}')
+
+		print('Step 2 - flash all')
+
+		try:
+			os.chdir(f'{firmware_path}/images/')
+			try:
+				os.remove(f'{rootfs}/infolog/partition.txt')
+			except:
+				pass
+			for i in group:
+				if len(i) == 9 or len(i) > 9: 
+					preloader_check = i[:9]
+					if preloader_check == 'preloader':
+						if os.system(f'fastboot flash preloader {i} 2>> {rootfs}/infolog/partition.txt') == 0:
+							continue
+						else:
+							os.chdir(rootfs)
+							return False
+					else:
+						if os.system(f'fastboot flash {i[:-4]} {i} 2>> {rootfs}/infolog/partition.txt') == 0:
+							continue
+						else:
+							os.chdir(rootfs)
+							return False
+				else:
+						if os.system(f'fastboot flash {i[:-4]} {i} 2>> {rootfs}/infolog/partition.txt') == 0:
+							continue
+						else:
+							os.chdir(rootfs)
+							return False
+			os.chdir(rootfs)
+		except:
+			os.chdir(rootfs)
 			return False

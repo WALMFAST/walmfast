@@ -44,17 +44,23 @@ def update_app(status):
 
     if status == 'Update_recommend':
 
-        try:
-            os.mkdir(f'{rootfs}/backup')
-        except:
-            pass
+        if os.path.isdir(f'{rootfs}/backup') == True:
+            if os.path.isdir(f'{rootfs}/backup/{os.path.basename(rootfs)}') == True:
+                shutil.rmtree(f'{rootfs}/backup/{os.path.basename(rootfs)}')
+            else:
+                pass
+        else:
+            try:
+                os.mkdir(f'{rootfs}/backup')
+            except:
+                pass
 
-        for file_backup in os.listdir(rootfs):
+        for file_backup in os.listdir(rootfs):    
 
             if file_backup == 'backup':
                 continue
             else:
-                pass              
+                pass         
 
             if os.path.isdir(f'{rootfs}/{file_backup}') == True:
                 shutil.copytree(f'{rootfs}/{file_backup}', f'{rootfs}/backup/{os.path.basename(rootfs)}/{file_backup}')
@@ -87,10 +93,16 @@ def update_app(status):
     
     if status == 'Update_required':
 
-        try: 
-            os.mkdir(f'{rootfs}/backup')
-        except:
-            pass
+        if os.path.isdir(f'{rootfs}/backup') == True:
+            if os.path.isdir(f'{rootfs}/backup/{os.path.basename(rootfs)}') == True:
+                shutil.rmtree(f'{rootfs}/backup/{os.path.basename(rootfs)}')
+            else:
+                pass
+        else:
+            try:
+                os.mkdir(f'{rootfs}/backup')
+            except:
+                pass
         
         for file_backup in os.listdir(rootfs):
 

@@ -1,10 +1,12 @@
 from script import adb_fastboot_firmwaer as ad_fas_firm
 from script import updater, ascii
+from threading import Thread
 ad_fas_firm.init()
 
 from customtkinter import *
 from settings import selector
 from settings import window_and_objects as winaobj
+from functools import partial
 from showinfm import show_in_file_manager
 from time import sleep
 
@@ -31,10 +33,23 @@ from script import firmware_complect_install as firm_comp_install
 #System fix
 rootfs = os.getcwd()
 status_update=None
+partition_group = []
+debug_mode = 0
+phone_vendor = None
 if platform.system() == 'Linux':
     FontManager.load_font(winaobj.FONT)
 elif platform.system() == 'Windows':
     winaobj.FONT_NAME = 'Segoe UI'
+
+try:
+    argument_mode = sys.argv[1]
+except:
+    argument_mode = None
+
+if argument_mode == '--debug-mode':
+    debug_mode = 1
+elif argument_mode == None:
+    pass
 
 themer = importlib.import_module(name=f'.{selector.theme}.{selector.theme}', package='image')
 
@@ -45,6 +60,9 @@ text = themer.text
 hover = themer.hover
 scrollable = themer.scrollable
 scrollbar_fg = themer.scrollbar_fg
+
+#For flash
+flash_all_status = IntVar(value=1)
 
 os.chdir(rootfs)
 
@@ -81,6 +99,7 @@ def menu_base():
     adb_sideload_frame.place_forget()
     delete_product_frame.place_forget()
     wipe_data_frame.place_forget()
+    flash_phone_frame.place_forget()
     base_frame.place(x=0, y=0)
 def menu_phone_status():
     menu_frame.place_forget()
@@ -157,7 +176,6 @@ def reboot_menu():
 def reboot_through(system, into):
 
     progressbar_re.place(x=100, y = 200)
-
     hader_re.configure(text=lang.reboot)
     reboot_through_adb.place_forget()
     reboot_through_fastboot.place_forget()
@@ -244,7 +262,10 @@ def load_phone_vendor():
             des.update()
         except:
             pass
+
+        
     elif platform.system() == 'Windows':
+        clear_flash() 
 
         phone_vendor = crossfiledialog.open_file(title='Open phone vendor file for WALMFAST', start_dir=f'{os.getcwd()}/{winaobj.PHONE_VENDOR_PATH}/', filter=["*.py"])
         vendorid = str(os.path.basename(phone_vendor))[:-3]
@@ -269,17 +290,41 @@ def load_phone_vendor():
         forum_firmwares_forpda_button.configure(state='normal', command=lambda: webbrowser.open_new_tab(f'{vendorvice.official_firmwares_forum_forpda}'))
         select_firmware_folder_button.configure(state='normal')
         test_state_button.configure(state='normal')
-        des.update()     
+        des.update()       
 def load_firmware_folder():
-    global vendorvice
+    global vendorvice, flash_all_status, partition_group, phone_vendor
+
+    clear_flash() 
 
     phone_vendor = crossfiledialog.choose_folder(title='Open firmware folder for WALMFAST', start_dir=f'{os.getcwd()}/')
 
+    print('Load flash_all.sh or flash_all.bat')
+    if platform.system() == 'Linux':
+        if os.path.isfile(f'{phone_vendor}/flash_all.sh') == True:
+            flash_all_radiobutton.pack(anchor=W)
+            flash_all_radiobutton.select()
+        else:
+            flash_partitions_radiobutton.select()
+    elif platform.system() == 'Windows':
+        if os.path.isfile(f'{phone_vendor}/flash_all.bat') == True:
+            flash_all_radiobutton.pack(anchor=W)
+            flash_all_radiobutton.select()
+        else:
+            flash_partitions_radiobutton.select()
+    
+    print('Load partitions from phone config')
     try:
+        partition_group.clear()
         partitions = ad_fas_firm.partitions_is_true(phone_vendor, vendorvice.partitions) 
+        print(partitions)
+
         for partition in partitions:
-            image_partition = CTkCheckBox(firmware_image_frame, text=partition, font=(winaobj.FONT_NAME, winaobj.FONT_SIZE_SMALL), hover_color='grey', corner_radius=2, border_color='white',text_color='white' ,fg_color='black')
-            image_partition.pack(anchor=W)  
+            flash_object = CTkCheckBox(firmware_partition_frame, text=partition, font=(winaobj.FONT_NAME, winaobj.FONT_SIZE_SMALL), hover_color='grey', corner_radius=2, border_color='white',text_color='white' ,fg_color='black')
+            flash_object.configure(command=partial(parition_group_check, name=partition, check=flash_object))
+            flash_object.pack(anchor=W)  
+
+        flash_partitions_radiobutton.pack(anchor=W)
+        flash_all_status_check()
     except:
         xdialog.error('WALMFast', f'{lang.phone_config_error}')
 
@@ -666,10 +711,68 @@ def wipe_data_fun():
     sleep(2)
     if ad_fas_firm.wipe_data() == False:
         xdialog.info('WALMFAST', f'{lang.score}\n\n{open('infolog/partition.txt', encoding='utf-8').read()}')
+        menu_base()
     else:
         xdialog.info('WALMFAST', f'{lang.score}\n\n{open('infolog/partition.txt', encoding='utf-8').read()}')
         menu_base()
+def flash_all_status_check():
+    if flash_all_status.get() == 1:
+        firmware_partition_frame.pack_forget()
 
+        if android_phone_status._text != lang.not_found and phone_vendor_model._text != lang.model_device or debug_mode == 1:
+            flash_phone_button.configure(state='normal')
+        else:
+            flash_phone_button.configure(state='disabled')
+    else:
+        firmware_partition_frame.pack()
+        if len(partition_group) == 0:
+            flash_phone_button.configure(state='disabled')
+def parition_group_check(name, check):
+    global partition_group
+
+    check = check.get()
+
+    if check == 0:
+        partition_group.remove(name)
+    elif check == 1:
+        partition_group.append(name)
+
+    if len(partition_group) == 0:
+        flash_phone_button.configure(state='disabled')
+    elif len(partition_group) > 0:
+        if android_phone_status._text != lang.not_found and phone_vendor_model._text != lang.model_device or debug_mode == 1:
+            flash_phone_button.configure(state='normal')
+        else:
+            flash_phone_button.configure(state='disabled')
+    #print(f'Objects in partition group: {partition_group}. Score - {len(partition_group)}')
+def clear_flash():
+    for widget in firmware_image_frame.winfo_children():
+        widget.pack_forget()
+    for widget in firmware_partition_frame .winfo_children():
+        widget.pack_forget() 
+    flash_phone_button.configure(state='disabled')
+def flash_all_process():
+    if ad_fas_firm.flash_all(phone_vendor) == False:
+        xdialog.info('WALMFAST', f'{lang.score}\n\n{open('infolog/partition.txt', encoding='utf-8').read()}')
+        menu_base()
+    else:
+        xdialog.info('WALMFAST', f'{lang.score}\n\n{open('infolog/partition.txt', encoding='utf-8').read()}')
+        menu_base()
+def flash_partition_process():
+    if ad_fas_firm.flash_partition_images(phone_vendor, partition_group) == False:
+        xdialog.info('WALMFAST', f'{lang.score}\n\n{open('infolog/partition.txt', encoding='utf-8').read()}')
+        menu_base()
+    else:
+        xdialog.info('WALMFAST', f'{lang.score}\n\n{open('infolog/partition.txt', encoding='utf-8').read()}')
+        menu_base()
+def flash_phone():
+    flash_phone_frame.place(x=0,y=0)
+
+    if flash_all_status.get() == 1:
+        des.after(7000, flash_all_process)
+    elif flash_all_status.get() == 0:
+        des.after(7000, flash_partition_process)
+    des.update()
 
 #Loading Entity
 background = CTkLabel(des, image=imageload.background, text='')
@@ -708,7 +811,13 @@ forum_firmwares_forpda_button = CTkButton(base_frame, font=(winaobj.FONT_NAME, w
 
 phone_reboot_button = CTkButton(base_frame, font=(winaobj.FONT_NAME, winaobj.FONT_SIZE_SMALL), height=45, text=f'{lang.phone_reboot}',text_color=text,corner_radius=2, bg_color=bg, fg_color=fg, hover_color=hover, border_color=border, border_width=2, state='disabled', width=228, command=reboot_menu)
 
-flash_phone_button = CTkButton(base_frame, font=(winaobj.FONT_NAME, winaobj.FONT_SIZE_SMALL), height=45, text=f'{lang.flash_device}',text_color='white',corner_radius=2, bg_color=bg, fg_color=fg, hover_color=hover, border_color=border, border_width=2, width=228, state='disabled')
+flash_phone_button = CTkButton(base_frame, font=(winaobj.FONT_NAME, winaobj.FONT_SIZE_SMALL), height=45, text=f'{lang.flash_device}',text_color='white',corner_radius=2, bg_color=bg, fg_color=fg, hover_color=hover, border_color=border, border_width=2, width=228, state='disabled', command=flash_phone)
+
+flash_partitions_radiobutton = CTkRadioButton(firmware_image_frame, text=lang.select_partition, variable=flash_all_status, value=0, font=(winaobj.FONT_NAME, winaobj.FONT_SIZE_SMALL), bg_color=bg, fg_color=border, text_color=text, hover_color=hover, border_color=border, command=flash_all_status_check)
+
+flash_all_radiobutton = CTkRadioButton(firmware_image_frame, text=lang.flash_all, variable=flash_all_status, value=1, font=(winaobj.FONT_NAME, winaobj.FONT_SIZE_SMALL), bg_color=bg, fg_color=border, text_color=text, hover_color=hover, border_color=border, command=flash_all_status_check)
+
+firmware_partition_frame = CTkScrollableFrame(firmware_image_frame, bg_color=bg, fg_color=fg, corner_radius=3, border_color=border, border_width=2, scrollbar_button_color=scrollable, scrollbar_button_hover_color=scrollable, scrollbar_fg_color=scrollbar_fg)
 
 background.place(x=1, y=1)
 base_frame.place(x=0,y=0)
@@ -788,13 +897,13 @@ firmwares_frame = CTkFrame(reboot_menu_frame, width=380, height=200, bg_color=bg
 
 close_button = CTkButton(reboot_menu_frame, font=(winaobj.FONT_NAME, winaobj.FONT_SIZE_SMALL), text=lang.close, text_color=text, image=imageload.close,corner_radius=2, bg_color=bg, fg_color=fg, hover_color=hover, border_color=border, width=140, border_width=2, command=menu_base)
 
-reboot_into_recovery = CTkButton(firmwares_frame, font=(winaobj.FONT_NAME, winaobj.FONT_SIZE_SMALL), text=lang.reboot_into_recovery, text_color=text, image=imageload.recovery,corner_radius=2, bg_color=bg, fg_color=fg, hover_color=hover, border_color=border, width=150, border_width=2, command=lambda: reboot_phone_through('recovery'))
+reboot_into_recovery = CTkButton(firmwares_frame, font=(winaobj.FONT_NAME, winaobj.FONT_SIZE_SMALL), text=lang.reboot_into_recovery, text_color=text, image=imageload.recovery,corner_radius=2, bg_color=bg, fg_color=fg, hover_color=hover, border_color=border, width=370, border_width=2, command=lambda: reboot_phone_through('recovery'))
 
-reboot_into_bootloader = CTkButton(firmwares_frame, font=(winaobj.FONT_NAME, winaobj.FONT_SIZE_SMALL), text=lang.reboot_into_bootloader, text_color=text, image=imageload.bootloader,corner_radius=2, bg_color=bg, fg_color=fg, hover_color=hover, border_color=border, width=150, border_width=2, command=lambda: reboot_phone_through('bootloader'))
+reboot_into_bootloader = CTkButton(firmwares_frame, font=(winaobj.FONT_NAME, winaobj.FONT_SIZE_SMALL), text=lang.reboot_into_bootloader, text_color=text, image=imageload.bootloader,corner_radius=2, bg_color=bg, fg_color=fg, hover_color=hover, border_color=border, width=370, border_width=2, command=lambda: reboot_phone_through('bootloader'))
 
-reboot_into_fastbootd = CTkButton(firmwares_frame, font=(winaobj.FONT_NAME, winaobj.FONT_SIZE_SMALL), text=lang.reboot_into_fastboot, text_color=text, image=imageload.fastbootd,corner_radius=2, bg_color=bg, fg_color=fg, hover_color=hover, border_color=border, width=150, border_width=2, command=lambda: reboot_phone_through('fastboot'))
+reboot_into_fastbootd = CTkButton(firmwares_frame, font=(winaobj.FONT_NAME, winaobj.FONT_SIZE_SMALL), text=lang.reboot_into_fastboot, text_color=text, image=imageload.fastbootd,corner_radius=2, bg_color=bg, fg_color=fg, hover_color=hover, border_color=border, width=370, border_width=2, command=lambda: reboot_phone_through('fastboot'))
 
-reboot_into_system = CTkButton(firmwares_frame, font=(winaobj.FONT_NAME, winaobj.FONT_SIZE_SMALL), text=lang.reboot_into_system, text_color=text, image=imageload.system,corner_radius=2, bg_color=bg, fg_color=fg, hover_color=hover, border_color=border, width=150, border_width=2, command=lambda: reboot_phone_through(''))
+reboot_into_system = CTkButton(firmwares_frame, font=(winaobj.FONT_NAME, winaobj.FONT_SIZE_SMALL), text=lang.reboot_into_system, text_color=text, image=imageload.system,corner_radius=2, bg_color=bg, fg_color=fg, hover_color=hover, border_color=border, width=370, border_width=2, command=lambda: reboot_phone_through(''))
 
 hader_re = CTkLabel(reboot_menu_frame, font=(winaobj.FONT_NAME, winaobj.FONT_SIZE_STANDART), text=f'{lang.reboot_through}', width=790, justify='center', text_color=text, bg_color=bg)
 
@@ -808,10 +917,11 @@ progressbar_re.start()
 background.place(x=1, y=1)
 firmwares_frame.place(x=285,y=131)
 close_button.place(x=795, y=470)
-reboot_into_recovery.place(x=32, y=20)
-reboot_into_bootloader.place(x=202, y=20)
-reboot_into_fastbootd.place(x=32, y=80)
-reboot_into_system.place(x=202, y=80)
+reboot_into_recovery.pack(padx=10, pady=5)
+reboot_into_bootloader.pack(padx=10, pady=5)
+reboot_into_fastbootd.pack(padx=10, pady=5)
+reboot_into_system.pack(padx=10, pady=5)
+
 
 #Entity 6 - Phone status through
 phone_status_frame = CTkFrame(des, width=winaobj.WIDTH, height=winaobj.HEIGHT, bg_color=bg)
@@ -1118,11 +1228,28 @@ background.place(x=1, y=1)
 close_button_wipe.place(x=795, y=470)
 wipe_data_button.place(x=175, y=300)
 
+#Entity 19 Flash Phone
+flash_phone_frame = CTkFrame(des, width=winaobj.WIDTH, height=winaobj.HEIGHT, bg_color=bg)
+
+background = CTkLabel(flash_phone_frame, image=imageload.background, text='')
+
+flash_phone_hader = CTkLabel(flash_phone_frame, font=(winaobj.FONT_NAME, winaobj.FONT_SIZE_STANDART), text=f'{lang.flash_phone}', width=winaobj.WIDTH, text_color=text, bg_color=bg)
+
+progressbar_fp = CTkProgressBar(flash_phone_frame, width=750, height=20, corner_radius=2, bg_color=bg, fg_color=fg, border_color=border, border_width=2, progress_color=border,mode='indeterminate', indeterminate_speed=0.8)
+progressbar_fp.start()
+
+background.place(x=1, y=1)
+flash_phone_hader.place(x=0, y=130)
+progressbar_fp.place(x=100, y=250)
+
 #Required actions
 des.wm_protocol('WM_DELETE_WINDOW', lambda: os._exit(0))
 
 #Debug
-#gsi_menu_button.configure(state='normal')
+if debug_mode == 1:
+    gsi_menu_button.configure(state='normal')
+    phone_reboot_button.configure(state='normal')
+    flash_phone_button.configure(state='normal')
 
 #Startup
 des.mainloop()
