@@ -81,11 +81,11 @@ def update_app(status):
             except:
                 shutil.copyfile(f'{rootfs}/backup/{os.path.basename(rootfs)}/{update_file}', f'{rootfs}/{update_file}')
                 shutil.rmtree(f'{rootfs}/backup/')
-                os.remove(f'{rootfs}/update.py')
+                os.remove(f'{rootfs}/update/update.py')
                 return False
 
         try:    
-            os.remove(f'{rootfs}/update.py')
+            os.remove(f'{rootfs}/update/update.py')
         except:
             pass
             
@@ -172,7 +172,7 @@ def update_app(status):
                     shutil.copyfile(f'{rootfs}/backup/{os.path.basename(rootfs)}/{file_return}', f'{rootfs}/{file_return}')
 
             try:
-                os.remove(f'{rootfs}/update.py')
+                os.remove(f'{rootfs}/update/update.py')
             except:
                 pass
 
