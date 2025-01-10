@@ -73,16 +73,24 @@ def update_app(status):
                 pass
         
         for update_file in update.update_packages:
-            
-            os.remove(update_file)
-            
-            try:
-                download(f'{update.repository}{update.branch}/{update_file}', f'{rootfs}/{update_file}')
-            except:
-                shutil.copyfile(f'{rootfs}/backup/{os.path.basename(rootfs)}/{update_file}', f'{rootfs}/{update_file}')
-                shutil.rmtree(f'{rootfs}/backup/')
-                os.remove(f'{rootfs}/update/update.py')
+
+            if os.path.isfile(f'{rootfs}/{update_file}') == True:
+                os.remove(f'{rootfs}/{update_file}')
+
+                try:
+                    download(f'{update.repository}{update.branch}/{update_file}', f'{rootfs}/{update_file}')
+                except:
+                    shutil.copyfile(f'{rootfs}/backup/{os.path.basename(rootfs)}/{update_file}', f'{rootfs}/{update_file}')
+                    shutil.rmtree(f'{rootfs}/backup/')
+                    os.remove(f'{rootfs}/update/update.py')
                 return False
+            else:
+                try:
+                    download(f'{update.repository}{update.branch}/{update_file}', f'{rootfs}/{update_file}')
+                except:
+                    shutil.rmtree(f'{rootfs}/backup/')
+                    os.remove(f'{rootfs}/update/update.py')
+                    return False
 
         try:    
             os.remove(f'{rootfs}/update/update.py')
