@@ -1,3 +1,4 @@
+import showinfm.showinfm
 from script import adb_fastboot_firmwaer as ad_fas_firm
 from script import updater, ascii
 from threading import Thread
@@ -46,7 +47,7 @@ try:
 except:
     argument_mode = None
 
-if argument_mode == '--debug-mode':
+if argument_mode == '--debug-mode' or argument_mode == '--debug':
     debug_mode = 1
 elif argument_mode == None:
     pass
@@ -171,11 +172,11 @@ def reboot_menu():
     reboot_through_fastboot.place_forget()
     base_frame.place_configure()
     hader_re.place_forget()
-    firmwares_frame.place(x=285,y=131)
+    firmwares_frame.place(x=themer.firmwares_frame_position[0],y=themer.firmwares_frame_position[1])
     reboot_menu_frame.place(x=0,y=0)
 def reboot_through(system, into):
 
-    progressbar_re.place(x=100, y = 200)
+    progressbar_re.place(x=themer.progressbar_re_position[0], y = themer.progressbar_re_position[1])
     hader_re.configure(text=lang.reboot)
     reboot_through_adb.place_forget()
     reboot_through_fastboot.place_forget()
@@ -201,9 +202,9 @@ def reboot_phone_through(into):
     reboot_through_adb.configure(command=lambda: reboot_through('adb', into))
     reboot_through_fastboot.configure(command=lambda: reboot_through('fastboot', into))
 
-    hader_re.place(x=80, y=110)
-    reboot_through_adb.place(x=300, y=200)
-    reboot_through_fastboot.place(x=500, y=202)
+    hader_re.place(x=themer.hader_re_position[0], y=themer.hader_re_position[1])
+    reboot_through_adb.place(x=themer.reboot_through_adb[0], y=themer.reboot_through_adb[1])
+    reboot_through_fastboot.place(x=themer.reboot_through_fastboot[0], y=themer.reboot_through_fastboot[1])
     progressbar_re.place_forget()
     firmwares_frame.place_forget()
 def phone_test_state(mode):
@@ -296,7 +297,7 @@ def load_firmware_folder():
 
     clear_flash() 
 
-    phone_vendor = crossfiledialog.choose_folder(title='Open firmware folder for WALMFAST', start_dir=f'{os.getcwd()}/')
+    phone_vendor = crossfiledialog.choose_folder(title='Open firmware folder for WALMFAST', start_dir=f'{os.getcwd()}')
 
     print('Load flash_all.sh or flash_all.bat')
     if platform.system() == 'Linux':
@@ -346,7 +347,7 @@ def customboot():
     try:
         if vendorvice.pbrp != None or vendorvice.pbrp != '':
             pbrp_button.configure(command=lambda: webbrowser.open_new_tab(f'{vendorvice.pbrp}'))
-            pbrp_button.place(x=350, y=470)
+            pbrp_button.place(x=themer.pbrp_button_position[0], y=themer.pbrp_button_position[1])
         else:
             pbrp_button.place_forget()
     except:
@@ -355,7 +356,7 @@ def customboot():
     try:
         if vendorvice.orangefox != None or vendorvice.orangefox != '':
             orangefox_button.configure(command=lambda: webbrowser.open_new_tab(f'{vendorvice.orangefox}'))
-            orangefox_button.place(x=20, y=470)
+            orangefox_button.place(x=themer.orangefox_button_position[0], y=themer.orangefox_button_position[1])
         else:
             orangefox_button.place_forget()
     except:
@@ -364,15 +365,15 @@ def customboot():
     try:
         if vendorvice.nonuniversalboot == True:
             flashit_partition_attetion.configure(text=lang.flashit_recovery_partition)
-            flashit_partition_attetion.place(x=0, y=10)
+            flashit_partition_attetion.place(x=themer.flashit_partition_attetion_position[0], y=themer.flashit_partition_attetion_position[1])
         elif vendorvice.nonuniversalboot == False:
             flashit_partition_attetion.configure(text=lang.flashit_boot_partition)
-            flashit_partition_attetion.place(x=0, y=10)
+            flashit_partition_attetion.place(x=themer.flashit_partition_attetion_position[0], y=themer.flashit_partition_attetion_position[1])
     except:
         flashit_partition_attetion.place_forget()
 
     recovery_path_textbox.place(x=40, y=250)
-    select_recovery_button.place(x=795, y=250)
+    select_recovery_button.place(x=themer.select_recovery_button_position[0], y=themer.select_recovery_button_position[1])
     menu_frame.place_forget()
     customboot_frame.place(x=0,y=0)
 def select_recovery_image():
@@ -381,15 +382,15 @@ def select_recovery_image():
     recovery_image = crossfiledialog.open_file(title='Open recovery image file for WALMFAST', filter=["*.img"])
     if recovery_image != '':
         recovery_path_textbox.configure(text=os.path.basename(recovery_image))
-        flash_recovery_button.place(x=530, y=472)
+        flash_recovery_button.place(x=themer.flash_recovery_button_position[0], y=themer.flash_recovery_button_position[1])
     if platform.system() == 'Windows':
         os.chdir(rootfs)
     des.update()
 def flash_recovery():
     flash_recovery_process_hader.configure(text=f'{lang.q_start_flash_recovery_process[0]}')
-    recovery_yes_button.place(x=640, y=340)
-    recovery_no_button.place(x=790, y=340)
-    flash_recovery_process_hader.place(x=50, y=340)
+    recovery_yes_button.place(x=themer.recovery_yes_button_position[0], y=themer.recovery_yes_button_position[1])
+    recovery_no_button.place(x=themer.recovery_no_button_position[0], y=themer.recovery_no_button_position[1])
+    flash_recovery_process_hader.place(x=themer.flash_recovery_process_hader_position[0], y=themer.flash_recovery_process_hader_position[1])
     flash_recovery_button.place_forget()
     close_button.place_forget()
 def start_flash_recovery(reboot):
@@ -409,9 +410,9 @@ def start_flash_recovery(reboot):
 
     if ad_fas_firm.status_unlock() == 'no':
         xdialog.error('WALMFAST', lang.unlock_bootloader_error)
-        close_button.place(x=795, y=470)
+        close_button.place(x=themer.close_button_position[0], y=themer.close_button_position[1])
         flash_recovery_process_hader.place_forget()
-        flash_recovery_button.place(x=530, y=472)
+        flash_recovery_button.place(x=themer.flash_recovery_button_position[0], y=themer.flash_recovery_button_position[1])
         menu_base()
     if ad_fas_firm.status_unlock() == 'yes':
         flash_recovery_process_hader.configure(text=lang.q_start_flash_recovery_process[3])
@@ -424,13 +425,13 @@ def start_flash_recovery(reboot):
         if ad_fas_firm.flash_partition(partition=universal_detect_boot, file=recovery_image) == True:
             flash_recovery_process_hader.place_forget()
             xdialog.info('WALMFAST', f'{lang.score}\n\n{open('infolog/partition.txt', encoding='utf-8').read()}')
-            close_button.place(x=795, y=470)
+            close_button.place(x=themer.close_button_position[0], y=themer.close_button_position[1])
             menu_base()
         elif ad_fas_firm.flash_partition(partition=universal_detect_boot, file=recovery_image) == False:
             xdialog.error('WALMFAST', lang.q_start_flash_recovery_process[4])
-            close_button.place(x=795, y=470)
+            close_button.place(x=themer.close_button_position[0], y=themer.close_button_position[1])
             flash_recovery_process_hader.place_forget()
-            flash_recovery_button.place(x=530, y=472)
+            flash_recovery_button.place(x=themer.flash_recovery_button_position[0], y=themer.flash_recovery_button_position[1])
             menu_base()    
 def write_language(language):
     with open('settings/selector.py', 'r') as f:
@@ -468,9 +469,9 @@ def select_gsi_image():
     gsi_image = crossfiledialog.open_file(title='Open gsi image file for WALMFAST', filter=["*.img"])
     if gsi_image != '':
         gsi_name.configure(text=f'{os.path.basename(gsi_image)}')
-        gsi_name.place(x=40, y=250)
+        gsi_name.place(x=themer.gsi_name_position[0], y=themer.gsi_name_position[1])
         des.update()
-        flash_gsi.place(x=585, y=470)
+        flash_gsi.place(x=themer.flash_gsi_position[0], y=themer.flash_gsi_position[1])
 
         reboot_fastbotd_yes_button.place_forget()
         reboot_fastbotd_no_button.place_forget()
@@ -480,10 +481,10 @@ def select_gsi_image():
     des.update()
 def flash_gsi_step_one():
     flash_gsi.place_forget()
-    reboot_fastbotd_yes_button.place(x=650, y=360)
-    reboot_fastbotd_no_button.place(x=795, y=360)
+    reboot_fastbotd_yes_button.place(x=themer.reboot_fastbotd_yes_button_position[0], y=themer.reboot_fastbotd_yes_button_position[1])
+    reboot_fastbotd_no_button.place(x=themer.reboot_fastbotd_no_button_position[0], y=themer.reboot_fastbotd_no_button_position[1])
     flash_gsi_process_hader.configure(text=f'{lang.gsi_process_hader[0]}')
-    flash_gsi_process_hader.place(x=40, y=356)
+    flash_gsi_process_hader.place(x=themer.flash_gsi_process_hader_position[0], y=themer.flash_gsi_process_hader_position[1])
 def flash_gsi_step_two(reboot):
     reboot_fastbotd_yes_button.place_forget()
     reboot_fastbotd_no_button.place_forget()
@@ -503,8 +504,8 @@ def flash_gsi_step_two(reboot):
 
     if ad_fas_firm.status_unlock() == 'no':
         xdialog.error('WALMFAST', lang.unlock_bootloader_error)
-        close_button.place(x=795, y=470)
-        flash_gsi.place(x=585, y=470)
+        close_button.place(x=themer.close_button_position[0], y=themer.close_button_position[1])
+        flash_gsi.place(x=themer.flash_gsi_position[0], y=themer.flash_gsi_position[1])
         flash_gsi_process_hader.place_forget()
         menu_base()
     elif ad_fas_firm.status_unlock() == 'yes':
@@ -514,15 +515,15 @@ def flash_gsi_step_two(reboot):
         if ad_fas_firm.flash_system(partition='system', file=gsi_image) == True:
             flash_recovery_process_hader.place_forget()
             xdialog.info('WALMFAST', f'{lang.score}\n\n{open('infolog/partition.txt', encoding='utf-8').read()}')
-            close_button.place(x=795, y=470)
-            flash_gsi.place(x=585, y=470)
+            close_button.place(x=themer.close_button_position[0], y=themer.close_button_position[1])
+            flash_gsi.place(x=themer.flash_gsi_position[0], y=themer.flash_gsi_position[1])
             des.update()
             menu_base()
         elif ad_fas_firm.flash_system(partition='system', file=gsi_image) == False:
             xdialog.error('WALMFAST', lang.gsi_process_hader[5])
-            close_button.place(x=795, y=470)
+            close_button.place(x=themer.close_button_position[0], y=themer.close_button_position[1])
             flash_gsi_process_hader.place_forget()
-            flash_gsi.place(x=585, y=470)
+            flash_gsi.place(x=themer.flash_gsi_position[0], y=themer.flash_gsi_position[1])
             menu_base()
 def vbmeta_installer():
     base_frame.place_forget()
@@ -532,17 +533,17 @@ def select_vbmeta_image():
     vbmeta_image = crossfiledialog.open_file(title='Open gsi image file for WALMFAST', filter=["*.img"])
     if vbmeta_image != '' and os.path.basename(vbmeta_image) == 'vbmeta.img':
         vbmeta_name.configure(text=f'{os.path.basename(vbmeta_image)}')
-        vbmeta_name.place(x=40, y=250)
-        flash_vbmeta.place(x=550, y=471)
+        vbmeta_name.place(x=themer.vbmeta_name_position[0], y=themer.vbmeta_name_position[1])
+        flash_vbmeta.place(x=themer.flash_vbmeta_position[0], y=themer.flash_vbmeta_position[1])
     if platform.system() == 'Windows':
         os.chdir(rootfs)
     des.update()
 def flash_vbmeta_step_one():
     flash_vbmeta.place_forget()
-    reboot_fastbot_yes_button.place(x=650, y=360)
-    reboot_fastbot_no_button.place(x=795, y=360)
+    reboot_fastbot_yes_button.place(x=themer.reboot_fastbot_yes_button_position[0], y=themer.reboot_fastbot_yes_button_position[1])
+    reboot_fastbot_no_button.place(x=themer.reboot_fastbot_no_button_position[0], y=themer.reboot_fastbot_no_button_position[1])
     flash_vbmeta_process_hader.configure(text=f'{lang.vbmeta_process_hader[0]}')
-    flash_vbmeta_process_hader.place(x=40, y=356)
+    flash_vbmeta_process_hader.place(x=themer.flash_vbmeta_process_hader_position[0], y=themer.flash_vbmeta_process_hader_position[1])
 def flash_vbmeta_step_two(reboot):
     reboot_fastbot_yes_button.place_forget()
     reboot_fastbot_no_button.place_forget()
@@ -562,8 +563,8 @@ def flash_vbmeta_step_two(reboot):
 
     if ad_fas_firm.status_unlock() == 'no':
         xdialog.error('WALMFAST', lang.unlock_bootloader_error)
-        close_button.place(x=795, y=470)
-        flash_vbmeta.place(x=585, y=470)
+        close_button.place(x=themer.close_button_position[0], y=themer.close_button_position[1])
+        flash_vbmeta.place(x=themer.flash_vbmeta_position[0], y=themer.flash_vbmeta_position[1])
         flash_vbmeta_process_hader.place_forget()
         menu_base()
     elif ad_fas_firm.status_unlock() == 'yes':
@@ -578,9 +579,9 @@ def flash_vbmeta_step_two(reboot):
             menu_base()
         elif ad_fas_firm.flash_system(partition='system', file=vbmeta_image) == False:
             xdialog.error('WALMFAST', lang.vbmeta_process_hader[6])
-            close_button.place(x=795, y=470)
+            close_button.place(x=themer.close_button_position[0], y=themer.close_button_position[1])
             flash_vbmeta_process_hader.place_forget()
-            flash_vbmeta.place(x=585, y=470)
+            flash_vbmeta.place(x=themer.flash_vbmeta_position[0], y=themer.flash_vbmeta_position[1])
             menu_base()
 def update():
     global status_update
@@ -603,12 +604,12 @@ def update():
         update_close_button.configure(state='normal')
     elif status_update == 'Update_recommend':
         update_hader.configure(text=lang.update_recommend)
-        update_yes_button.place(x=300, y=300)
-        update_no_button.place(x=500, y=300)
+        update_yes_button.place(x=themer.update_yes_button_position[0], y=themer.update_yes_button_position[1])
+        update_no_button.place(x=themer.update_no_button_position[0], y=themer.update_no_button_position[1])
     elif status_update == 'Update_required':
         update_hader.configure(text=lang.update_required)
-        update_yes_button.place(x=300, y=300)
-        update_no_button.place(x=500, y=300)
+        update_yes_button.place(x=themer.update_yes_button_position[0], y=themer.update_yes_button_position[1])
+        update_no_button.place(x=themer.update_no_button_position[0], y=themer.update_no_button_position[1])
     elif status_update == False:
         update_hader.configure(text=lang.unable_update_check)
         update_close_button.configure(state='normal')
@@ -684,13 +685,12 @@ def start_adb_sideload():
 def delete_product():
     gsi_frame.place_forget()
     delete_product_button.configure(state='normal', text=lang.delete_product)
-    close_button.place(x=795, y=470)
+    close_button.place(x=themer.close_button_position[0], y=themer.close_button_position[1])
     delete_product_frame.place(x=0,y=0)
 def delete_product_fun():
     close_button.place_forget()
-    delete_product_button.configure(state='disabled', text=lang.please_wait)
+    delete_product_confirm_button.configure(state='disabled', text=lang.please_wait)
     des.update()
-
 
     if ad_fas_firm.delete_product() == False:
         xdialog.info('WALMFAST', f'{lang.score}\n\n{open('infolog/partition.txt', encoding='utf-8').read()}')
@@ -701,11 +701,11 @@ def delete_product_fun():
 def wipe_data():
     gsi_frame.place_forget()
     wipe_data_frame.place(x=0,y=0)
-    close_button_wipe.place(x=795, y=470)
+    close_button_wipe.place(x=themer.close_button_position[0], y=themer.close_button_position[1])
     wipe_data_button.configure(state='normal', text=lang.wipe_data)
 def wipe_data_fun():
     close_button_wipe.place_forget()
-    wipe_data_button.configure(state='disabled', text=lang.please_wait)
+    wipe_data_confirm_button.configure(state='disabled', text=lang.please_wait)
     des.update()
 
     sleep(2)
@@ -753,7 +753,7 @@ def clear_flash():
     flash_phone_button.configure(state='disabled')
 def flash_all_process():
     if ad_fas_firm.flash_all(phone_vendor) == False:
-        xdialog.info('WALMFAST', f'{lang.score}\n\n{open('infolog/partition.txt', encoding='utf-8').read()}')
+        xdialog.info('WALMFAST', f'{lang.score}\n\n{lang.platorm_tools_error}')
         menu_base()
     else:
         xdialog.info('WALMFAST', f'{lang.score}\n\n{open('infolog/partition.txt', encoding='utf-8').read()}')
@@ -819,24 +819,23 @@ flash_all_radiobutton = CTkRadioButton(firmware_image_frame, text=lang.flash_all
 
 firmware_partition_frame = CTkScrollableFrame(firmware_image_frame, bg_color=bg, fg_color=fg, corner_radius=3, border_color=border, border_width=2, scrollbar_button_color=scrollable, scrollbar_button_hover_color=scrollable, scrollbar_fg_color=scrollbar_fg)
 
-background.place(x=1, y=1)
+background.place(x=themer.background_position[0], y=themer.background_position[1])
 base_frame.place(x=0,y=0)
-background.place(x=1, y=1)
-frame.place(x=20, y=20)
-android.place(x=30, y=70)
-android_phone_status.place(x=30, y=370)
-phone_vendor_model.place(x=20, y=467)
-select_phone_model_button.place(x=385,y=25)
-test_state_button.place(x=695,y=73)
-gsi_menu_button.place(x=740, y=25)
-menu_button.place(x=695, y=25)
-firmware_image_frame.place(x=385,y=73)
-select_firmware_folder_button.place(x=385,y=470)
-forum_firmwares_forpda_button.place(x=695,y=276)
-phone_reboot_button.place(x=695,y=324)
-flash_phone_button.place(x=695,y=372)
-about_button.place(x=695,y=420)
-exit_button.place(x=695,y=470)
+frame.place(x=themer.frame_position[0], y=themer.frame_position[1])
+android.place(x=themer.android_position[0], y=themer.android_position[1])
+android_phone_status.place(x=themer.android_phone_status_position[0], y=themer.android_phone_status_position[1])
+phone_vendor_model.place(x=themer.phone_vendor_model_position[0], y=themer.phone_vendor_model_position[1])
+select_phone_model_button.place(x=themer.select_phone_model_button_position[0],y=themer.select_phone_model_button_position[1])
+test_state_button.place(x=themer.test_state_button_position[0],y=themer.test_state_button_position[1])
+gsi_menu_button.place(x=themer.gsi_menu_button_position[0], y=themer.gsi_menu_button_position[1])
+menu_button.place(x=themer.menu_button_position[0], y=themer.menu_button_position[1])
+firmware_image_frame.place(x=themer.firmware_image_frame_position[0],y=themer.firmware_image_frame_position[1])
+select_firmware_folder_button.place(x=themer.select_firmware_folder_button_position[0],y=themer.select_firmware_folder_button_position[1])
+forum_firmwares_forpda_button.place(x=themer.forum_firmwares_forpda_button_position[0],y=themer.forum_firmwares_forpda_button_position[1])
+phone_reboot_button.place(x=themer.phone_reboot_button_position[0],y=themer.phone_reboot_button_position[1])
+flash_phone_button.place(x=themer.flash_phone_button_position[0],y=themer.flash_phone_button_position[1])
+about_button.place(x=themer.about_button_position[0],y=themer.about_button_position[1])
+exit_button.place(x=themer.exit_button_position[0],y=themer.exit_button_position[1])
 
 #Entity 2
 menu_frame = CTkFrame(des, width=winaobj.WIDTH, height=winaobj.HEIGHT, bg_color=bg)
@@ -861,16 +860,16 @@ select_theme_button = CTkButton(firmwares_frame, font=(winaobj.FONT_NAME, winaob
 
 get_music_name_button = CTkButton(firmwares_frame, font=(winaobj.FONT_NAME, winaobj.FONT_SIZE_SMALL), text=lang.get_music_name, width=360, text_color=text, image=imageload.music,corner_radius=2, bg_color=bg, fg_color=fg, hover_color=hover, border_color=border, border_width=2)
 
-background.place(x=1, y=1)
-firmwares_frame.place(x=285,y=103)
-volume_on_button.place(x=10, y=10)
-volume_off_button.place(x=195, y=10)
-close_button.place(x=795, y=470)
-location_music_button.place(x=10, y=70)
-install_firmware_complect_button.place(x=10, y=130)
-select_language_button.place(x=10, y=190)
-select_theme_button.place(x=195, y=190)
-get_music_name_button.place(x=10, y=250)
+background.place(x=themer.background_position[0], y=themer.background_position[1])
+firmwares_frame.place(x=themer.firmwares_frame_position[0],y=themer.firmwares_frame_position[1])
+volume_on_button.place(x=themer.volume_on_button_position[0], y=themer.volume_on_button_position[1])
+volume_off_button.place(x=themer.volume_off_button_position[0], y=themer.volume_off_button_position[1])
+close_button.place(x=themer.close_button_position[0], y=themer.close_button_position[1])
+location_music_button.place(x=themer.location_music_button_position[0], y=themer.location_music_button_position[1])
+install_firmware_complect_button.place(x=themer.install_firmware_complect_button_position[0], y=themer.install_firmware_complect_button_position[1])
+select_language_button.place(x=themer.select_language_button_position[0], y=themer.select_language_button_position[1])
+select_theme_button.place(x=themer.select_theme_button_position[0], y=themer.select_theme_button_position[1])
+get_music_name_button.place(x=themer.get_music_name_button_position[0], y=themer.get_music_name_button_position[1])
 
 #Entity 4 - Installer Firmware Complect
 firmware_complect_installer_frame = CTkFrame(des, width=winaobj.WIDTH, height=winaobj.HEIGHT, bg_color=bg)
@@ -884,9 +883,9 @@ haderfirm = CTkLabel(firmware_complect_installer_frame, image=distr[0], font=(wi
 progressbar = CTkProgressBar(firmware_complect_installer_frame, width=750, height=20, corner_radius=2, bg_color=bg, fg_color=fg, border_color=border, border_width=2, progress_color=border,mode='indeterminate', indeterminate_speed=5 )
 progressbar.start()
 
-background.place(x=1, y=1)
-haderfirm.place(x=100, y=100)
-progressbar.place(x=100, y = 200)
+background.place(x=themer.background_position[0], y=themer.background_position[1])
+haderfirm.place(x=themer.hadefirm_position[0], y=themer.hadefirm_position[1])
+progressbar.place(x=themer.progressbar_position[0], y = themer.progressbar_position[1])
 
 #Entity 5 - Reboot device
 reboot_menu_frame = CTkFrame(des, width=winaobj.WIDTH, height=winaobj.HEIGHT, bg_color=bg)
@@ -895,7 +894,7 @@ background = CTkLabel(reboot_menu_frame, image=imageload.background, text='')
 
 firmwares_frame = CTkFrame(reboot_menu_frame, width=380, height=200, bg_color=bg, fg_color=fg, corner_radius=3, border_color=border, border_width=2)
 
-close_button = CTkButton(reboot_menu_frame, font=(winaobj.FONT_NAME, winaobj.FONT_SIZE_SMALL), text=lang.close, text_color=text, image=imageload.close,corner_radius=2, bg_color=bg, fg_color=fg, hover_color=hover, border_color=border, width=140, border_width=2, command=menu_base)
+close_button = CTkButton(reboot_menu_frame, font=(winaobj.FONT_NAME, winaobj.FONT_SIZE_SMALL), text=lang.close, text_color=text, image=imageload.close,corner_radius=2, bg_color=bg, fg_color=fg, hover_color=hover, border_color=border, width=150, border_width=2, command=menu_base)
 
 reboot_into_recovery = CTkButton(firmwares_frame, font=(winaobj.FONT_NAME, winaobj.FONT_SIZE_SMALL), text=lang.reboot_into_recovery, text_color=text, image=imageload.recovery,corner_radius=2, bg_color=bg, fg_color=fg, hover_color=hover, border_color=border, width=370, border_width=2, command=lambda: reboot_phone_through('recovery'))
 
@@ -914,13 +913,13 @@ reboot_through_fastboot = CTkButton(reboot_menu_frame, font=(winaobj.FONT_NAME, 
 progressbar_re = CTkProgressBar(reboot_menu_frame, width=750, height=20, corner_radius=2, bg_color=bg, fg_color=fg, border_color=border, border_width=2, progress_color=border,mode='indeterminate', indeterminate_speed=5 )
 progressbar_re.start()
 
-background.place(x=1, y=1)
-firmwares_frame.place(x=285,y=131)
-close_button.place(x=795, y=470)
-reboot_into_recovery.pack(padx=10, pady=5)
-reboot_into_bootloader.pack(padx=10, pady=5)
-reboot_into_fastbootd.pack(padx=10, pady=5)
-reboot_into_system.pack(padx=10, pady=5)
+background.place(x=themer.background_position[0], y=themer.background_position[1])
+firmwares_frame.place(x=themer.firmwares_frame_position[0],y=themer.firmwares_frame_position[1])
+close_button.place(x=themer.close_button_position[0], y=themer.close_button_position[1])
+reboot_into_recovery.pack(padx=themer.reboot_into_recovery_pad[0], pady=themer.reboot_into_recovery_pad[1])
+reboot_into_bootloader.pack(padx=themer.reboot_into_bootloader_pad[0], pady=themer.reboot_into_bootloader_pad[1])
+reboot_into_fastbootd.pack(padx=themer.reboot_into_fastbootd_pad[0], pady=themer.reboot_into_fastbootd_pad[1])
+reboot_into_system.pack(padx=themer.reboot_into_system_pad[0], pady=themer.reboot_into_system_pad[1])
 
 
 #Entity 6 - Phone status through
@@ -936,11 +935,11 @@ hader_state = CTkLabel(phone_status_frame, font=(winaobj.FONT_NAME, winaobj.FONT
 
 close_button = CTkButton(phone_status_frame, font=(winaobj.FONT_NAME, winaobj.FONT_SIZE_SMALL), text=lang.close, text_color=text, image=imageload.close,corner_radius=2, bg_color=bg, fg_color=fg, hover_color=hover, border_color=border, width=150, border_width=2, command=menu_base)
 
-background.place(x=1, y=1)
-close_button.place(x=795, y=470)
-hader_state.place(x=80, y=110)
-phone_status_through_adb.place(x=300, y=200)
-phone_status_through_fastboot.place(x=500, y=202)
+background.place(x=themer.background_position[0], y=themer.background_position[1])
+close_button.place(x=themer.close_button_position[0], y=themer.close_button_position[1])
+hader_state.place(x=themer.hader_state_position[0], y=themer.hader_state_position[1])
+phone_status_through_adb.place(x=themer.phone_status_through_adb_position[0], y=themer.phone_status_through_adb_position[1])
+phone_status_through_fastboot.place(x=themer.phone_status_through_fastboot_position[0], y=themer.phone_status_through_fastboot_position[1])
 
 #Entity 7 GSI Menu
 gsi_menu_frame = CTkFrame(des, width=winaobj.WIDTH, height=winaobj.HEIGHT, bg_color=bg)
@@ -965,16 +964,16 @@ adbsideload_button = CTkButton(gsi_menu_frame, font=(winaobj.FONT_NAME, winaobj.
 
 customboot_button = CTkButton(gsi_menu_frame, font=(winaobj.FONT_NAME, winaobj.FONT_SIZE_STANDART_MEDIUM), height=45, text=f'{lang.install_customboot}', image=imageload.customboot, text_color=text,corner_radius=2, bg_color=bg, fg_color=fg, width=495, anchor=W, hover_color=hover, border_color=border, border_width=2, command=customboot)
 
-background.place(x=1, y=1)
-close_button.place(x=795, y=470)
-flash_custom_partition_button.place(x=40, y=110)
-approve_custom_load_button.place(x=40, y=163)
-wipe_data_button.place(x=40, y=216)
-delete_product_button.place(x=40, y=269)
-search_gsi_button.place(x=580, y=110)
-forum_nonfirmwares_forpda_button.place(x=580,y=163)
-adbsideload_button.place(x=580,y=226)
-customboot_button.place(x=40,y=322)
+background.place(x=themer.background_position[0], y=themer.background_position[1])
+close_button.place(x=themer.close_button_position[0], y=themer.close_button_position[1])
+flash_custom_partition_button.place(x=themer.flash_custom_partition_button_position[0], y=themer.flash_custom_partition_button_position[1])
+approve_custom_load_button.place(x=themer.approve_custom_load_button_position[0], y=themer.approve_custom_load_button_position[1])
+wipe_data_button.place(x=themer.wipe_data_button_position[0], y=themer.wipe_data_button_position[1])
+delete_product_button.place(x=themer.delete_product_button_position[0], y=themer.delete_product_button_position[1])
+search_gsi_button.place(x=themer.search_gsi_button_position[0], y=themer.search_gsi_button_position[1])
+forum_nonfirmwares_forpda_button.place(x=themer.forum_nonfirmwares_forpda_button_position[0],y=themer.forum_nonfirmwares_forpda_button_position[1])
+adbsideload_button.place(x=themer.adbsideload_button_position[0],y=themer.adbsideload_button_position[1])
+customboot_button.place(x=themer.customboot_button_position[0],y=themer.customboot_button_position[1])
 
 #Entity 8 - About 
 about_menu_frame = CTkFrame(des, width=winaobj.WIDTH, height=winaobj.HEIGHT, bg_color=bg)
@@ -995,14 +994,14 @@ extended_button = CTkButton(about_menu_frame, font=(winaobj.FONT_NAME, winaobj.F
 
 update_button = CTkButton(about_menu_frame, font=(winaobj.FONT_NAME, winaobj.FONT_SIZE_SMALL), text=lang.update, text_color=text, image=imageload.update,corner_radius=2, bg_color=bg, fg_color=fg, hover_color=hover, border_color=border, width=195, border_width=2, command=update)
 
-background.place(x=1, y=1)
-walmfast_logo.place(x=120, y=100)
-program_name.place(x=400, y=100)
-model_branch.place(x=400, y=150)
-made_by.place(x=400, y=200)
-close_button.place(x=795, y=470)
-extended_button.place(x=400, y=270)
-update_button.place(x=615, y=270)
+background.place(x=themer.background_position[0], y=themer.background_position[1])
+walmfast_logo.place(x=themer.walmfast_logo_position[0], y=themer.walmfast_logo_position[1])
+program_name.place(x=themer.program_name_position[0], y=themer.program_name_position[1])
+model_branch.place(x=themer.model_branch_position[0], y=themer.model_branch_position[1])
+made_by.place(x=themer.made_by_position[0], y=themer.made_by_position[1])
+close_button.place(x=themer.close_button_position[0], y=themer.close_button_position[1])
+extended_button.place(x=themer.extended_button_position[0], y=themer.extended_button_position[1])
+update_button.place(x=themer.update_button_position[0], y=themer.update_button_position[1])
 
 #Entity 9 - Customboot installer 
 customboot_frame = CTkFrame(des, width=winaobj.WIDTH, height=winaobj.HEIGHT, bg_color=bg)
@@ -1032,10 +1031,10 @@ recovery_no_button = CTkButton(customboot_frame, font=(winaobj.FONT_NAME, winaob
 
 flashit_partition_attetion = CTkLabel(customboot_frame, font=(winaobj.FONT_NAME, winaobj.FONT_SIZE_SMALL), width=winaobj.WIDTH, height=18, justify='center', text=f'partition', text_color='red', bg_color=bg)
 
-background.place(x=1, y=1)
-customboot_hader.place(x=40, y=30)
-customboot_descryption.place(x=40, y=120)
-close_button.place(x=795, y=470)
+background.place(x=themer.background_position[0], y=themer.background_position[1])
+customboot_hader.place(x=themer.customboot_hader_position[0], y=themer.customboot_hader_position[1])
+customboot_descryption.place(x=themer.customboot_descryption_position[0], y=themer.customboot_descryption_position[1])
+close_button.place(x=themer.close_button_position[0], y=themer.close_button_position[1])
 
 #Entity 10 - Задонать пж
 donatos_frame = CTkFrame(des, width=winaobj.WIDTH, height=winaobj.HEIGHT, bg_color=bg)
@@ -1050,11 +1049,11 @@ destination_and_number_card = CTkLabel(donatos_frame, font=(winaobj.FONT_NAME, w
 
 close_button = CTkButton(donatos_frame, font=(winaobj.FONT_NAME, winaobj.FONT_SIZE_SMALL), text=lang.close, text_color=text, image=imageload.close,corner_radius=2, bg_color=bg, fg_color=fg, hover_color=hover, border_color=border, width=150, border_width=2, command=menu_base)
 
-background.place(x=1, y=1)
-donatos_destination.place(x=120, y=115)
-donatos_me.place(x=400, y=100)
-destination_and_number_card.place(x=400, y=150)
-close_button.place(x=795, y=470)
+background.place(x=themer.background_position[0], y=themer.background_position[1])
+donatos_destination.place(x=themer.donatos_destination_position[0], y=themer.donatos_destination_position[1])
+donatos_me.place(x=themer.donatos_me_position[0], y=themer.donatos_me_position[1])
+destination_and_number_card.place(x=themer.destination_and_number_card[0], y=themer.destination_and_number_card[1])
+close_button.place(x=themer.close_button_position[0], y=themer.close_button_position[1])
 
 #Entity 11 - Language switcher
 langswitcher_frame = CTkFrame(des, width=winaobj.WIDTH, height=winaobj.HEIGHT, bg_color=bg)
@@ -1069,11 +1068,11 @@ russian_language = CTkButton(langswitcher_frame, font=(winaobj.FONT_NAME, winaob
 
 english_language = CTkButton(langswitcher_frame, font=(winaobj.FONT_NAME, winaobj.FONT_SIZE_SMALL), text=lang.english_language, text_color=text, image=imageload.english_flag,corner_radius=2, bg_color=bg, height=45, fg_color=fg, hover_color=hover, border_color=border, border_width=2, command=lambda: write_language('eng'))
 
-background.place(x=1, y=1)
-langswitcher_hader.place(x=5, y=100)
-close_button.place(x=795, y=470)
-russian_language.place(x=300, y=200)
-english_language.place(x=500, y=202)
+background.place(x=themer.background_position[0], y=themer.background_position[1])
+langswitcher_hader.place(x=themer.langswitcher_hader_position[0], y=themer.langswitcher_hader_position[1])
+close_button.place(x=themer.close_button_position[0], y=themer.close_button_position[1])
+russian_language.place(x=themer.russian_language_position[0], y=themer.russian_language_position[1])
+english_language.place(x=themer.english_language_position[0], y=themer.english_language_position[1])
 
 #Entity 12 - Theme switcher
 themeswitcher_frame = CTkFrame(des, width=winaobj.WIDTH, height=winaobj.HEIGHT, bg_color=bg)
@@ -1086,10 +1085,10 @@ close_button = CTkButton(themeswitcher_frame, font=(winaobj.FONT_NAME, winaobj.F
 
 themes_frame = CTkScrollableFrame(themeswitcher_frame, width=380, height=310, bg_color=bg, fg_color=fg, corner_radius=3, border_color=border, border_width=2)
 
-background.place(x=1, y=1)
-themeswitcher_hader.place(x=5, y=100)
-close_button.place(x=795, y=470)
-themes_frame.place(x=285,y=180)
+background.place(x=themer.background_position[0], y=themer.background_position[1])
+themeswitcher_hader.place(x=themer.themeswitcher_hader_position[0], y=themer.themeswitcher_hader_position[1])
+close_button.place(x=themer.close_button_position[0], y=themer.close_button_position[1])
+themes_frame.place(x=themer.themes_frame_position[0],y=themer.themes_frame_position[1])
 
 #Entity 13 - GSI System Installer
 gsi_frame = CTkFrame(des, width=winaobj.WIDTH, height=winaobj.HEIGHT, bg_color=bg)
@@ -1113,11 +1112,11 @@ flash_gsi_process_hader = CTkLabel(gsi_frame, font=(winaobj.FONT_NAME, winaobj.F
 reboot_fastbotd_yes_button = CTkButton(gsi_frame, font=(winaobj.FONT_NAME, winaobj.FONT_SIZE_STANDART_MEDIUM), text=f'{lang.yes}', text_color=text,corner_radius=2, bg_color=bg, fg_color=fg, hover_color=hover, border_color=border, border_width=2, command=lambda: flash_gsi_step_two(reboot=True))
 reboot_fastbotd_no_button = CTkButton(gsi_frame, font=(winaobj.FONT_NAME, winaobj.FONT_SIZE_STANDART_MEDIUM), text=f'{lang.no}', text_color=text,corner_radius=2, bg_color=bg, fg_color=fg, hover_color=hover, width=150, border_color=border, border_width=2, command=lambda: flash_gsi_step_two(reboot=False))
 
-background.place(x=1, y=1)
-gsi_hader.place(x=40, y=30)
-gsi_descryption.place(x=40, y=120)
-close_button.place(x=795, y=470)
-select_gsi_button.place(x=795, y=250)
+background.place(x=themer.background_position[0], y=themer.background_position[1])
+gsi_hader.place(x=themer.gsi_hader_position[0], y=themer.gsi_hader_position[1])
+gsi_descryption.place(x=themer.gsi_descryption_position[0], y=themer.gsi_descryption_position[1])
+close_button.place(x=themer.close_button_position[0], y=themer.close_button_position[1])
+select_gsi_button.place(x=themer.select_gsi_button_position[0], y=themer.select_gsi_button_position[1])
 
 #Entity 14 - Vbmeta Fix Installer
 vbmeta_frame = CTkFrame(des, width=winaobj.WIDTH, height=winaobj.HEIGHT, bg_color=bg)
@@ -1141,11 +1140,11 @@ flash_vbmeta_process_hader = CTkLabel(vbmeta_frame, font=(winaobj.FONT_NAME, win
 reboot_fastbot_yes_button = CTkButton(vbmeta_frame, font=(winaobj.FONT_NAME, winaobj.FONT_SIZE_STANDART_MEDIUM), text=f'{lang.yes}', text_color=text,corner_radius=2, bg_color=bg, fg_color=fg, hover_color=hover, border_color=border, border_width=2, command=lambda: flash_vbmeta_step_two(reboot=True))
 reboot_fastbot_no_button = CTkButton(vbmeta_frame, font=(winaobj.FONT_NAME, winaobj.FONT_SIZE_STANDART_MEDIUM), text=f'{lang.no}', text_color=text,corner_radius=2, bg_color=bg, fg_color=fg, hover_color=hover, width=150, border_color=border, border_width=2, command=lambda: flash_vbmeta_step_two(reboot=False))
 
-background.place(x=1, y=1)
-vbmeta_hader.place(x=40, y=30)
-vbmeta_descryption.place(x=40, y=120)
-close_button.place(x=795, y=470)
-select_vbmeta_button.place(x=795, y=250)
+background.place(x=themer.background_position[0], y=themer.background_position[1])
+vbmeta_hader.place(x=themer.vbmeta_hader_position[0], y=themer.vbmeta_hader_position[1])
+vbmeta_descryption.place(x=themer.vbmeta_descryption_position[0], y=themer.vbmeta_descryption_position[1])
+close_button.place(x=themer.close_button_position[0], y=themer.close_button_position[1])
+select_vbmeta_button.place(x=themer.select_vbmeta_button_position[0], y=themer.select_vbmeta_button_position[1])
 
 #Entity 15 - Update
 update_frame = CTkFrame(des, width=winaobj.WIDTH, height=winaobj.HEIGHT, bg_color=bg)
@@ -1159,9 +1158,9 @@ update_hader = CTkLabel(update_frame, font=(winaobj.FONT_NAME, winaobj.FONT_SIZE
 update_yes_button = CTkButton(update_frame, font=(winaobj.FONT_NAME, winaobj.FONT_SIZE_STANDART_MEDIUM), text=f'{lang.yes}', text_color=text,corner_radius=2, bg_color=bg, fg_color=fg, hover_color=hover, border_color=border, border_width=2, command=lambda: update_start(status_update))
 update_no_button = CTkButton(update_frame, font=(winaobj.FONT_NAME, winaobj.FONT_SIZE_STANDART_MEDIUM), text=f'{lang.no}', text_color=text,corner_radius=2, bg_color=bg, fg_color=fg, hover_color=hover, width=150, border_color=border, border_width=2, command=menu_base)
 
-background.place(x=1, y=1)
-update_close_button.place(x=795, y=470)
-update_hader.place(x=0, y=220)
+background.place(x=themer.background_position[0], y=themer.background_position[1])
+update_close_button.place(x=themer.close_button_position[0], y=themer.close_button_position[1])
+update_hader.place(x=themer.update_hader_position[0], y=themer.update_hader_position[1])
 
 #Entity 16 - ADB Sideload
 adb_sideload_frame = CTkFrame(des, width=winaobj.WIDTH, height=winaobj.HEIGHT, bg_color=bg)
@@ -1184,11 +1183,11 @@ sideload_image = CTkLabel(adb_sideload_frame, image=imageload.sideload, text='')
 
 contunue_sideload = CTkButton(adb_sideload_frame, font=(winaobj.FONT_NAME, winaobj.FONT_SIZE_STANDART_MEDIUM), text=f'{lang.l_continue}', image=imageload.right, text_color=text,corner_radius=2, bg_color=bg, fg_color=fg, hover_color=hover, border_color=border, border_width=2, height=50, width=200, command=start_adb_sideload)
 
-background.place(x=1, y=1)
-close_button.place(x=795, y=470)
-adb_sideload_hader.place(x=40, y=30)
-adb_sideload_descryption.place(x=40, y=120)
-select_adb_sideload_button.place(x=795, y=300)
+background.place(x=themer.background_position[0], y=themer.background_position[1])
+close_button.place(x=themer.close_button_position[0], y=themer.close_button_position[1])
+adb_sideload_hader.place(x=themer.adb_sideload_hader_position[0], y=themer.adb_sideload_hader_position[1])
+adb_sideload_descryption.place(x=themer.adb_sideload_descryption_position[0], y=themer.adb_sideload_descryption_position[1])
+select_adb_sideload_button.place(x=themer.select_adb_sideload_button_position[0], y=themer.select_adb_sideload_button_position[1])
 
 #Entity 17 Delete Product
 delete_product_frame = CTkFrame(des, width=winaobj.WIDTH, height=winaobj.HEIGHT, bg_color=bg)
@@ -1201,13 +1200,13 @@ delete_product_descryption = CTkLabel(delete_product_frame, font=(winaobj.FONT_N
 
 close_button = CTkButton(delete_product_frame, font=(winaobj.FONT_NAME, winaobj.FONT_SIZE_SMALL), text=lang.close, text_color=text, image=imageload.close,corner_radius=2, bg_color=bg, fg_color=fg, hover_color=hover, border_color=border, width=150, border_width=2, command=menu_base)
 
-delete_product_button = CTkButton(delete_product_frame, font=(winaobj.FONT_NAME, winaobj.FONT_SIZE_STANDART_MEDIUM), text=f'{lang.delete_product}', text_color=text,corner_radius=2, bg_color=bg, fg_color=fg, hover_color=hover, border_color=border, border_width=2, height=50, width=600, command=delete_product_fun)
+delete_product_confirm_button = CTkButton(delete_product_frame, font=(winaobj.FONT_NAME, winaobj.FONT_SIZE_STANDART_MEDIUM), text=f'{lang.delete_product}', text_color=text,corner_radius=2, bg_color=bg, fg_color=fg, hover_color=hover, border_color=border, border_width=2, height=50, width=600, command=delete_product_fun)
 
-background.place(x=1, y=1)
-close_button.place(x=795, y=470)
-delete_product_hader.place(x=40, y=30)
-delete_product_descryption.place(x=40, y=120)
-delete_product_button.place(x=175, y=300)
+background.place(x=themer.background_position[0], y=themer.background_position[1])
+close_button.place(x=themer.close_button_position[0], y=themer.close_button_position[1])
+delete_product_hader.place(x=themer.delete_product_hader_position[0], y=themer.delete_product_hader_position[1])
+delete_product_descryption.place(x=themer.delete_product_descryption_position[0], y=themer.delete_product_descryption_position[1])
+delete_product_confirm_button.place(x=themer.delete_product_confirm_button_position[0], y=themer.delete_product_confirm_button_position[1])
 
 #Entity 18 Wipe Data
 wipe_data_frame = CTkFrame(des, width=winaobj.WIDTH, height=winaobj.HEIGHT, bg_color=bg)
@@ -1220,13 +1219,13 @@ wipe_data_descryption = CTkLabel(wipe_data_frame, font=(winaobj.FONT_NAME, winao
 
 close_button_wipe = CTkButton(wipe_data_frame, font=(winaobj.FONT_NAME, winaobj.FONT_SIZE_SMALL), text=lang.close, text_color=text, image=imageload.close,corner_radius=2, bg_color=bg, fg_color=fg, hover_color=hover, border_color=border, width=150, border_width=2, command=menu_base)
 
-wipe_data_button = CTkButton(wipe_data_frame, font=(winaobj.FONT_NAME, winaobj.FONT_SIZE_STANDART_MEDIUM), text=f'{lang.wipe_data}', text_color=text,corner_radius=2, bg_color=bg, fg_color=fg, hover_color=hover, border_color=border, border_width=2, height=50, width=600, command=wipe_data_fun)
+wipe_data_confirm_button = CTkButton(wipe_data_frame, font=(winaobj.FONT_NAME, winaobj.FONT_SIZE_STANDART_MEDIUM), text=f'{lang.wipe_data}', text_color=text,corner_radius=2, bg_color=bg, fg_color=fg, hover_color=hover, border_color=border, border_width=2, height=50, width=600, command=wipe_data_fun)
 
-wipe_data_hader.place(x=40, y=30)
-wipe_data_descryption.place(x=40, y=120)
-background.place(x=1, y=1)
-close_button_wipe.place(x=795, y=470)
-wipe_data_button.place(x=175, y=300)
+wipe_data_hader.place(x=themer.wipe_data_hader_position[0], y=themer.wipe_data_hader_position[1])
+wipe_data_descryption.place(x=themer.wipe_data_descryption_position[0], y=themer.wipe_data_descryption_position[1])
+background.place(x=themer.background_position[0], y=themer.background_position[1])
+close_button_wipe.place(x=themer.close_button_position[0], y=themer.close_button_position[1])
+wipe_data_confirm_button.place(x=themer.wipe_data_confirm_button_position[0], y=themer.wipe_data_confirm_button_position[1])
 
 #Entity 19 Flash Phone
 flash_phone_frame = CTkFrame(des, width=winaobj.WIDTH, height=winaobj.HEIGHT, bg_color=bg)
@@ -1238,9 +1237,9 @@ flash_phone_hader = CTkLabel(flash_phone_frame, font=(winaobj.FONT_NAME, winaobj
 progressbar_fp = CTkProgressBar(flash_phone_frame, width=750, height=20, corner_radius=2, bg_color=bg, fg_color=fg, border_color=border, border_width=2, progress_color=border,mode='indeterminate', indeterminate_speed=0.8)
 progressbar_fp.start()
 
-background.place(x=1, y=1)
-flash_phone_hader.place(x=0, y=130)
-progressbar_fp.place(x=100, y=250)
+background.place(x=themer.background_position[0], y=themer.background_position[1])
+flash_phone_hader.place(x=themer.flash_phone_hader_position[0], y=themer.flash_phone_hader_position[1])
+progressbar_fp.place(x=themer.progressbar_fp_position[0], y=themer.progressbar_fp_position[1])
 
 #Required actions
 des.wm_protocol('WM_DELETE_WINDOW', lambda: os._exit(0))
