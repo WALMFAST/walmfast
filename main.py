@@ -16,6 +16,7 @@ import crossfiledialog
 import webbrowser
 import xdialog
 import platform
+import fileinput
 
 if selector.select_languages == 'rus':
     from languages import rus as lang
@@ -434,27 +435,15 @@ def start_flash_recovery(reboot):
             flash_recovery_button.place(x=themer.flash_recovery_button_position[0], y=themer.flash_recovery_button_position[1])
             menu_base()    
 def write_language(language):
-    with open('settings/selector.py', 'r') as f:
-        for i in range(0):
-            f.readline()
-        x = f.readline()
-    with open ('settings/selector.py', 'r') as f:
-        old_data = f.read()
-    new_data = old_data.replace(f'{x}', f"select_languages =  '{language}'\n")
-    with open ('settings/selector.py', 'w') as f:
-        f.write(new_data)
+    for line in fileinput.input('settings/selector.py', inplace=True):
+        print(line.replace(f"select_languages = '{selector.select_languages}'", f"select_languages = '{language}'"), end='')
+
     xdialog.info('WALMFAST', lang.program_is_exit)
     os._exit(0)
 def themeswitch(theme):
-    with open('settings/selector.py', 'r') as f:
-        for i in range(1):
-            f.readline()
-        x = f.readline()
-    with open ('settings/selector.py', 'r') as f:
-        old_data = f.read()
-    new_data = old_data.replace(f'{x}', f"theme =  '{theme}'\n")
-    with open ('settings/selector.py', 'w') as f:
-        f.write(new_data)
+    for line in fileinput.input('settings/selector.py', inplace=True):
+        print(line.replace(f"theme = '{selector.theme}'", f"theme = '{theme}'"), end='')
+
     xdialog.info('WALMFAST', lang.program_is_exit)
     os._exit(0)
 def gsi_installer():
