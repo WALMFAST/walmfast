@@ -2,7 +2,7 @@ from wget import download
 from settings import window_and_objects as winaobj
 from settings import version
 import os
-import shutil
+import shutil 
 import importlib
 
 
@@ -77,20 +77,20 @@ def update_app(status):
             if os.path.isfile(f'{rootfs}/{update_file}') == True:
                 os.remove(f'{rootfs}/{update_file}')
 
-                try:
-                    download(f'{update.repository}{update.branch}/{update_file}', f'{rootfs}/{update_file}')
-                except:
-                    shutil.copyfile(f'{rootfs}/backup/{os.path.basename(rootfs)}/{update_file}', f'{rootfs}/{update_file}')
-                    shutil.rmtree(f'{rootfs}/backup/')
-                    os.remove(f'{rootfs}/update/update.py')
-                return False
+                #try:
+                download(f'{update.repository}{update.branch}/{update_file}', f'{rootfs}/{update_file}')
+                #except:
+                #    shutil.copyfile(f'{rootfs}/backup/{os.path.basename(rootfs)}/{update_file}', f'{rootfs}/{update_file}')
+                #    shutil.rmtree(f'{rootfs}/backup/')
+                #    os.remove(f'{rootfs}/update/update.py')
+                #return False
             else:
-                try:
-                    download(f'{update.repository}{update.branch}/{update_file}', f'{rootfs}/{update_file}')
-                except:
-                    shutil.rmtree(f'{rootfs}/backup/')
-                    os.remove(f'{rootfs}/update/update.py')
-                    return False
+                #try:
+                download(f'{update.repository}{update.branch}/{update_file}', f'{rootfs}/{update_file}')
+                #except:
+                #    shutil.rmtree(f'{rootfs}/backup/')
+                #    os.remove(f'{rootfs}/update/update.py')
+                #    return False
 
         try:    
             os.remove(f'{rootfs}/update/update.py')
@@ -143,9 +143,9 @@ def update_app(status):
                 os.remove(f'{rootfs}/{file_remove}')
 
         try:
-            download(f'https://github.com/WALMFAST/walmfast/archive/refs/heads/{update.branch}.zip', f'{rootfs}/walmfast.zip')
+            download(f'https://raw.githubusercontent.com/WLACDeveloper/Wlap-FlashTool/refs/heads/{update.branch}.zip', f'{rootfs}/wftool.zip')
             shutil.unpack_archive(f'{rootfs}/walmfast.zip', f'{rootfs}')
-            os.remove(f'{rootfs}/walmfast.zip')
+            os.remove(f'{rootfs}/wftool.zip')
 
             for file_copy in os.listdir(f'{rootfs}/walmfast-{update.branch}'):
 
