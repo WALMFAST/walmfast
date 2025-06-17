@@ -1,4 +1,5 @@
 bg = 'black'
+bg1 = '#262626'
 fg = 'black'
 border = 'white'
 text = 'white'
@@ -50,6 +51,7 @@ search_gsi_button_position = [580, 110]
 forum_nonfirmwares_forpda_button_position = [580, 163]
 adbsideload_button_position = [580, 226]
 customboot_button_position = [40, 322]
+switch_slot = [40, 418]
 
 walmfast_logo_position = [120, 100]
 program_name_position = [400, 100]
